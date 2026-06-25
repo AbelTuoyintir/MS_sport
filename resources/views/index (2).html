@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProLeague FC - Team Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bg-dark': '#0A0B0F',
+                        'bg-card': '#12141A',
+                        'bg-elevated': '#1A1D26',
+                        'accent-gold': '#FFD700',
+                        'accent-cyan': '#00D4FF',
+                        'accent-purple': '#8B5CF6',
+                        'accent-green': '#10B981',
+                        'accent-red': '#EF4444',
+                        'text-primary': '#FFFFFF',
+                        'text-secondary': '#9CA3AF',
+                        'text-muted': '#6B7280',
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; background-color: #0A0B0F; color: #FFFFFF; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        
+        /* Stadium Background Pattern */
+        .stadium-bg {
+            background-image: 
+                radial-gradient(ellipse at 50% 0%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(255, 215, 0, 0.05) 0%, transparent 40%),
+                linear-gradient(180deg, #0A0B0F 0%, #0D0F14 100%);
+        }
+        
+        /* Field Lines Pattern */
+        .field-lines {
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 80px 80px;
+        }
+        
+        /* Glass Card */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(26, 29, 38, 0.9) 0%, rgba(18, 20, 26, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+        }
+        
+        .glass-card-gold {
+            background: linear-gradient(135deg, rgba(26, 29, 38, 0.9) 0%, rgba(18, 20, 26, 0.95) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+        }
+        
+        /* Player Card Rarity */
+        .player-card-common { border: 1px solid rgba(156, 163, 175, 0.3); }
+        .player-card-rare { border: 1px solid rgba(0, 212, 255, 0.4); box-shadow: 0 0 20px rgba(0, 212, 255, 0.1); }
+        .player-card-epic { border: 1px solid rgba(139, 92, 246, 0.4); box-shadow: 0 0 20px rgba(139, 92, 246, 0.15); }
+        .player-card-legendary { border: 1px solid rgba(255, 215, 0, 0.4); box-shadow: 0 0 25px rgba(255, 215, 0, 0.2); }
+        
+        /* Stat Bar */
+        .stat-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .stat-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease-out;
+        }
+        
+        /* Position Badges */
+        .pos-gk { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .pos-def { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .pos-mid { background: linear-gradient(135deg, #10B981, #059669); }
+        .pos-fwd { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #FFD700, #F59E0B);
+            color: #0A0B0F;
+            font-weight: 700;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-cyan {
+            background: linear-gradient(135deg, #00D4FF, #0891B2);
+            color: #0A0B0F;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-cyan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #FFFFFF;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* Navigation */
+        .nav-item {
+            color: #9CA3AF;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: #FFD700;
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: linear-gradient(90deg, #FFD700, #F59E0B);
+            border-radius: 2px;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0A0B0F; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 215, 0, 0.3); border-radius: 3px; }
+        
+        /* Animations */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4); }
+        }
+        .animate-pulse-gold { animation: pulse-glow 2s ease-in-out infinite; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        
+        /* Formation Field */
+        .formation-field {
+            background: linear-gradient(180deg, #1a472a 0%, #143620 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .formation-field::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+        }
+        
+        /* Player Slot */
+        .player-slot {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .player-slot:hover {
+            border-color: #FFD700;
+            transform: scale(1.1);
+        }
+        .player-slot.filled {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.2);
+        }
+        
+        /* Tab Navigation */
+        .tab-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #9CA3AF;
+            background: transparent;
+            border: none;
+        }
+        .tab-btn.active {
+            color: #0A0B0F;
+            background: linear-gradient(135deg, #FFD700, #F59E0B);
+        }
+        .tab-btn:hover:not(.active) {
+            color: #FFFFFF;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Price Tag */
+        .price-tag {
+            background: linear-gradient(135deg, #10B981, #059669);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        
+        /* Rating Circle */
+        .rating-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+        }
+        .rating-high { background: linear-gradient(135deg, #FFD700, #F59E0B); color: #0A0B0F; }
+        .rating-mid { background: linear-gradient(135deg, #00D4FF, #0891B2); color: #0A0B0F; }
+        .rating-low { background: linear-gradient(135deg, #9CA3AF, #6B7280); color: #0A0B0F; }
+    </style>
+</head>
+<body class="stadium-bg">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-50 bg-bg-dark/90 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-gold to-orange-500 flex items-center justify-center">
+                        <i data-lucide="trophy" class="w-6 h-6 text-bg-dark"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-xl text-white">ProLeague <span class="text-accent-gold">FC</span></h1>
+                        <p class="text-text-muted text-xs">Team Manager</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#dashboard" class="nav-item active text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>Dashboard
+                    </a>
+                    <a href="#squad" class="nav-item text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4"></i>My Squad
+                    </a>
+                    <a href="#market" class="nav-item text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>Market
+                    </a>
+                    <a href="#lineup" class="nav-item text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="shield" class="w-4 h-4"></i>Lineup
+                    </a>
+                    <a href="#leaderboard" class="nav-item text-sm font-medium flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>Stats
+                    </a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="glass-card px-4 py-2 flex items-center gap-3">
+                        <i data-lucide="wallet" class="w-5 h-5 text-accent-gold"></i>
+                        <span class="font-bold text-accent-gold">$2.4M</span>
+                    </div>
+                    <img src="https://i.pravatar.cc/150?img=11" alt="Manager" class="w-10 h-10 rounded-full border-2 border-accent-gold">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-24 pb-12">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="max-w-7xl mx-auto px-6 mb-12">
+            <!-- Team Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass-card-gold p-5 opacity-0 translate-y-6" id="card-team-rating">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-sm">Team Rating</span>
+                        <i data-lucide="star" class="w-5 h-5 text-accent-gold"></i>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-white">87</span>
+                        <span class="text-accent-green text-sm font-semibold mb-1">+2</span>
+                    </div>
+                    <div class="stat-bar mt-3">
+                        <div class="stat-bar-fill bg-gradient-to-r from-accent-gold to-orange-500" style="width: 87%"></div>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="card-squad-value">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-sm">Squad Value</span>
+                        <i data-lucide="banknote" class="w-5 h-5 text-accent-cyan"></i>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <span class="text-3xl font-black text-white">$18.5M</span>
+                    </div>
+                    <p class="text-text-muted text-xs mt-2">+ $1.2M this week</p>
+                </div>
+                
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="card-league-position">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-sm">League Position</span>
+                        <i data-lucide="trending-up" class="w-5 h-5 text-accent-green"></i>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <span class="text-4xl font-black text-white">#3</span>
+                        <span class="text-accent-green text-sm font-semibold mb-1">↑ 2</span>
+                    </div>
+                    <p class="text-text-muted text-xs mt-2">of 20 teams</p>
+                </div>
+                
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="card-next-match">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-sm">Next Match</span>
+                        <i data-lucide="clock" class="w-5 h-5 text-accent-purple"></i>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-bg-elevated flex items-center justify-center text-lg font-bold">VS</div>
+                        <div>
+                            <p class="font-bold text-white">Red Devils FC</p>
+                            <p class="text-text-muted text-xs">Today, 8:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Performance & Quick Actions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Match History -->
+                <div class="lg:col-span-2 glass-card p-6 opacity-0 translate-y-6" id="match-history">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="font-bold text-lg">Recent Matches</h3>
+                        <button class="text-accent-cyan text-sm hover:underline">View All</button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-bg-elevated/50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-accent-green/20 flex items-center justify-center">
+                                    <span class="text-accent-green font-bold">W</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">vs City Strikers</p>
+                                    <p class="text-text-muted text-sm">Matchday 12 • Home</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-accent-green">3-1</p>
+                                <p class="text-text-muted text-xs">+3 pts</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-bg-elevated/50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-accent-gold/20 flex items-center justify-center">
+                                    <span class="text-accent-gold font-bold">D</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">vs Blue Lions</p>
+                                    <p class="text-text-muted text-sm">Matchday 11 • Away</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-accent-gold">2-2</p>
+                                <p class="text-text-muted text-xs">+1 pt</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 bg-bg-elevated/50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-accent-red/20 flex items-center justify-center">
+                                    <span class="text-accent-red font-bold">L</span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">vs Royal Knights</p>
+                                    <p class="text-text-muted text-sm">Matchday 10 • Home</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-2xl font-black text-accent-red">0-2</p>
+                                <p class="text-text-muted text-xs">+0 pts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="glass-card p-6 opacity-0 translate-y-6" id="quick-actions">
+                    <h3 class="font-bold text-lg mb-6">Quick Actions</h3>
+                    
+                    <div class="space-y-3">
+                        <button class="w-full p-4 bg-bg-elevated/50 hover:bg-bg-elevated rounded-xl flex items-center gap-4 transition-all hover:translate-x-1">
+                            <div class="w-10 h-10 rounded-lg bg-accent-cyan/20 flex items-center justify-center">
+                                <i data-lucide="shopping-bag" class="w-5 h-5 text-accent-cyan"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-sm">Buy Players</p>
+                                <p class="text-text-muted text-xs">Browse transfer market</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted ml-auto"></i>
+                        </button>
+                        
+                        <button class="w-full p-4 bg-bg-elevated/50 hover:bg-bg-elevated rounded-xl flex items-center gap-4 transition-all hover:translate-x-1">
+                            <div class="w-10 h-10 rounded-lg bg-accent-green/20 flex items-center justify-center">
+                                <i data-lucide="shield-check" class="w-5 h-5 text-accent-green"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-sm">Set Lineup</p>
+                                <p class="text-text-muted text-xs">4/6 players selected</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted ml-auto"></i>
+                        </button>
+                        
+                        <button class="w-full p-4 bg-bg-elevated/50 hover:bg-bg-elevated rounded-xl flex items-center gap-4 transition-all hover:translate-x-1">
+                            <div class="w-10 h-10 rounded-lg bg-accent-purple/20 flex items-center justify-center">
+                                <i data-lucide="trending-up" class="w-5 h-5 text-accent-purple"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-sm">View Stats</p>
+                                <p class="text-text-muted text-xs">Team & player analytics</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted ml-auto"></i>
+                        </button>
+                        
+                        <button class="w-full p-4 bg-bg-elevated/50 hover:bg-bg-elevated rounded-xl flex items-center gap-4 transition-all hover:translate-x-1">
+                            <div class="w-10 h-10 rounded-lg bg-accent-gold/20 flex items-center justify-center">
+                                <i data-lucide="tag" class="w-5 h-5 text-accent-gold"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="font-semibold text-sm">Sell Players</p>
+                                <p class="text-text-muted text-xs">3 players on market</p>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted ml-auto"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- My Squad Section -->
+        <section id="squad" class="max-w-7xl mx-auto px-6 mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">My Squad</h2>
+                    <p class="text-text-secondary text-sm">Manage your team of 15 players</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="tab-btn active">All</button>
+                    <button class="tab-btn">GK</button>
+                    <button class="tab-btn">DEF</button>
+                    <button class="tab-btn">MID</button>
+                    <button class="tab-btn">FWD</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Player Cards -->
+                <div class="player-card-legendary glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">92</span>
+                        <span class="pos-gk text-xs font-bold px-2 py-1 rounded">GK</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-gold/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">M. Neuer</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Goalkeeper</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$4.2M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-epic glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">89</span>
+                        <span class="pos-def text-xs font-bold px-2 py-1 rounded">DEF</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-purple/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">V. van Dijk</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Center Back</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$3.8M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">85</span>
+                        <span class="pos-def text-xs font-bold px-2 py-1 rounded">DEF</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">A. Rudiger</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Center Back</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$2.1M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-epic glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">90</span>
+                        <span class="pos-mid text-xs font-bold px-2 py-1 rounded">MID</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-purple/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">K. De Bruyne</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Midfielder</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$5.5M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">86</span>
+                        <span class="pos-mid text-xs font-bold px-2 py-1 rounded">MID</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">F. Valverde</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Midfielder</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$2.8M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-legendary glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">94</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-gold/50 animate-pulse-gold">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">E. Haaland</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Striker</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$8.2M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">84</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">B. Saka</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Winger</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$2.4M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-common glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-low">78</span>
+                        <span class="pos-def text-xs font-bold px-2 py-1 rounded">DEF</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-gray-500/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">J. Gvardiol</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Left Back</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$1.2M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-common glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-low">76</span>
+                        <span class="pos-mid text-xs font-bold px-2 py-1 rounded">MID</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-gray-500/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">C. Gallagher</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Midfielder</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$980K</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+                
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 player-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">83</span>
+                        <span class="pos-def text-xs font-bold px-2 py-1 rounded">DEF</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">R. James</h4>
+                    <p class="text-text-muted text-xs text-center mb-3">Right Back</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-text-secondary">Value</span>
+                        <span class="font-bold text-accent-gold">$1.8M</span>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-white/10 flex gap-2">
+                        <button class="flex-1 py-2 bg-accent-cyan/20 hover:bg-accent-cyan/30 text-accent-cyan text-xs rounded-lg transition-colors">View</button>
+                        <button class="flex-1 py-2 bg-accent-red/20 hover:bg-accent-red/30 text-accent-red text-xs rounded-lg transition-colors">Sell</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Transfer Market Section -->
+        <section id="market" class="max-w-7xl mx-auto px-6 mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Transfer Market</h2>
+                    <p class="text-text-secondary text-sm">Buy and sell players to strengthen your squad</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="glass-card px-4 py-2 flex items-center gap-2">
+                        <i data-lucide="search" class="w-4 h-4 text-text-muted"></i>
+                        <input type="text" placeholder="Search players..." class="bg-transparent border-none outline-none text-sm text-white w-40">
+                    </div>
+                    <button class="btn-cyan flex items-center gap-2">
+                        <i data-lucide="filter" class="w-4 h-4"></i>Filter
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Market Tabs -->
+            <div class="flex items-center gap-2 mb-6">
+                <button class="tab-btn active">Available</button>
+                <button class="tab-btn">My Listings</button>
+                <button class="tab-btn">Watchlist</button>
+                <button class="tab-btn">Recent Deals</button>
+            </div>
+            
+            <!-- Market Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Market Player 1 -->
+                <div class="player-card-epic glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="absolute -top-2 -right-2">
+                        <span class="price-tag">HOT</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">91</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-purple/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">M. Salah</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Winger • 31 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-up" class="w-3 h-3 text-accent-green"></i>
+                        <span class="text-accent-green text-xs">+12% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$6.8M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 2 -->
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">87</span>
+                        <span class="pos-mid text-xs font-bold px-2 py-1 rounded">MID</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">J. Bellingham</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Midfielder • 20 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-up" class="w-3 h-3 text-accent-green"></i>
+                        <span class="text-accent-green text-xs">+8% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$4.5M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 3 -->
+                <div class="player-card-legendary glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="absolute -top-2 -right-2">
+                        <span class="bg-accent-gold text-bg-dark text-xs font-bold px-2 py-1 rounded">LEGEND</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">93</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-gold/50 animate-pulse-gold">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">L. Messi</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Forward • 36 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="minus" class="w-3 h-3 text-text-muted"></i>
+                        <span class="text-text-muted text-xs">Stable</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$12M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 4 -->
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">85</span>
+                        <span class="pos-def text-xs font-bold px-2 py-1 rounded">DEF</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">W. Saliba</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Center Back • 22 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-up" class="w-3 h-3 text-accent-green"></i>
+                        <span class="text-accent-green text-xs">+15% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$3.2M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 5 -->
+                <div class="player-card-common glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-low">79</span>
+                        <span class="pos-gk text-xs font-bold px-2 py-1 rounded">GK</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-gray-500/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">G. Donnarumma</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Goalkeeper • 24 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-down" class="w-3 h-3 text-accent-red"></i>
+                        <span class="text-accent-red text-xs">-3% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$1.5M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 6 -->
+                <div class="player-card-epic glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">88</span>
+                        <span class="pos-mid text-xs font-bold px-2 py-1 rounded">MID</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-purple/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">P. Foden</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Midfielder • 23 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-up" class="w-3 h-3 text-accent-green"></i>
+                        <span class="text-accent-green text-xs">+18% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$5.1M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 7 -->
+                <div class="player-card-rare glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-mid">84</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-cyan/50">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">G. Jesus</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Striker • 26 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="minus" class="w-3 h-3 text-text-muted"></i>
+                        <span class="text-text-muted text-xs">Stable</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$2.9M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+                
+                <!-- Market Player 8 -->
+                <div class="player-card-legendary glass-card p-4 rounded-xl opacity-0 scale-95 market-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="rating-circle rating-high">95</span>
+                        <span class="pos-fwd text-xs font-bold px-2 py-1 rounded">FWD</span>
+                    </div>
+                    <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center border-2 border-accent-gold/50 animate-pulse-gold">
+                        <i data-lucide="user" class="w-10 h-10 text-gray-400"></i>
+                    </div>
+                    <h4 class="font-bold text-center text-sm">K. Mbappe</h4>
+                    <p class="text-text-muted text-xs text-center mb-2">Striker • 25 yrs</p>
+                    <div class="flex items-center justify-center gap-1 mb-3">
+                        <i data-lucide="trending-up" class="w-3 h-3 text-accent-green"></i>
+                        <span class="text-accent-green text-xs">+22% value</span>
+                    </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-text-secondary text-xs">Asking</span>
+                        <span class="font-bold text-accent-gold">$15M</span>
+                    </div>
+                    <button class="btn-primary w-full py-2 text-sm">Buy Now</button>
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <button class="btn-outline px-8">Load More Players</button>
+            </div>
+        </section>
+
+        <!-- Lineup Selection Section -->
+        <section id="lineup" class="max-w-7xl mx-auto px-6 mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Select Lineup</h2>
+                    <p class="text-text-secondary text-sm">Choose 6 players for your starting formation</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-text-secondary text-sm">Selected:</span>
+                    <span class="font-bold text-accent-green">4/6</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formation Field -->
+                <div class="lg:col-span-2">
+                    <div class="formation-field aspect-[4/3] p-8 relative">
+                        <!-- Center Circle -->
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 border-2 border-white/20 rounded-full"></div>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white/40 rounded-full"></div>
+                        
+                        <!-- Center Line -->
+                        <div class="absolute top-0 left-1/2 w-0.5 h-full bg-white/20"></div>
+                        
+                        <!-- Goal Areas -->
+                        <div class="absolute top-1/2 left-0 -translate-y-1/2 w-16 h-32 border-2 border-white/20 border-l-0"></div>
+                        <div class="absolute top-1/2 right-0 -translate-y-1/2 w-16 h-32 border-2 border-white/20 border-r-0"></div>
+                        
+                        <!-- Player Positions -->
+                        <div class="absolute inset-0">
+                            <!-- GK -->
+                            <div class="absolute left-[5%] top-1/2 -translate-y-1/2">
+                                <div class="player-slot filled" onclick="selectSlot(this)">
+                                    <img src="https://i.pravatar.cc/150?img=60" alt="GK" class="w-14 h-14 rounded-full object-cover">
+                                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-bg-dark/80 px-2 py-0.5 rounded text-xs whitespace-nowrap">Neuer</div>
+                                </div>
+                            </div>
+                            
+                            <!-- DEF 1 -->
+                            <div class="absolute left-[25%] top-[20%]">
+                                <div class="player-slot filled" onclick="selectSlot(this)">
+                                    <img src="https://i.pravatar.cc/150?img=33" alt="DEF" class="w-14 h-14 rounded-full object-cover">
+                                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-bg-dark/80 px-2 py-0.5 rounded text-xs whitespace-nowrap">van Dijk</div>
+                                </div>
+                            </div>
+                            
+                            <!-- DEF 2 (Empty) -->
+                            <div class="absolute left-[25%] bottom-[20%]">
+                                <div class="player-slot" onclick="selectSlot(this)">
+                                    <i data-lucide="plus" class="w-6 h-6 text-white/40"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- MID 1 -->
+                            <div class="absolute left-[50%] top-[30%]">
+                                <div class="player-slot filled" onclick="selectSlot(this)">
+                                    <img src="https://i.pravatar.cc/150?img=12" alt="MID" class="w-14 h-14 rounded-full object-cover">
+                                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-bg-dark/80 px-2 py-0.5 rounded text-xs whitespace-nowrap">De Bruyne</div>
+                                </div>
+                            </div>
+                            
+                            <!-- MID 2 (Empty) -->
+                            <div class="absolute left-[50%] bottom-[30%]">
+                                <div class="player-slot" onclick="selectSlot(this)">
+                                    <i data-lucide="plus" class="w-6 h-6 text-white/40"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- FWD -->
+                            <div class="absolute right-[10%] top-1/2 -translate-y-1/2">
+                                <div class="player-slot filled" onclick="selectSlot(this)">
+                                    <img src="https://i.pravatar.cc/150?img=11" alt="FWD" class="w-14 h-14 rounded-full object-cover">
+                                    <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 bg-bg-dark/80 px-2 py-0.5 rounded text-xs whitespace-nowrap">Haaland</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formation Selector -->
+                    <div class="flex items-center justify-center gap-4 mt-4">
+                        <span class="text-text-secondary text-sm">Formation:</span>
+                        <select class="glass-card px-4 py-2 text-sm outline-none cursor-pointer">
+                            <option>2-2-1 (Defensive)</option>
+                            <option>1-3-2 (Balanced)</option>
+                            <option>1-2-3 (Attacking)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Available Players -->
+                <div class="glass-card p-5">
+                    <h3 class="font-bold mb-4">Available Players</h3>
+                    <div class="space-y-3 max-h-[400px] overflow-y-auto">
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=15" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">A. Rudiger</p>
+                                <p class="text-text-muted text-xs">DEF • 85 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=22" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">F. Valverde</p>
+                                <p class="text-text-muted text-xs">MID • 86 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=25" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">B. Saka</p>
+                                <p class="text-text-muted text-xs">FWD • 84 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=30" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">J. Gvardiol</p>
+                                <p class="text-text-muted text-xs">DEF • 78 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=35" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">C. Gallagher</p>
+                                <p class="text-text-muted text-xs">MID • 76 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 p-3 bg-bg-elevated/50 rounded-xl hover:bg-bg-elevated cursor-pointer transition-colors">
+                            <img src="https://i.pravatar.cc/150?img=40" alt="Player" class="w-10 h-10 rounded-full">
+                            <div class="flex-1">
+                                <p class="font-semibold text-sm">R. James</p>
+                                <p class="text-text-muted text-xs">DEF • 83 OVR</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-accent-green/20 hover:bg-accent-green/30 flex items-center justify-center transition-colors">
+                                <i data-lucide="plus" class="w-4 h-4 text-accent-green"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full mt-4 py-3" onclick="saveLineup()">
+                        <i data-lucide="save" class="w-4 h-4 inline mr-2"></i>Save Lineup
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Stats & Leaderboard Section -->
+        <section id="leaderboard" class="max-w-7xl mx-auto px-6 mb-12">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Stats & Leaderboard</h2>
+                    <p class="text-text-secondary text-sm">Track your team's performance</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="tab-btn active">League Table</button>
+                    <button class="tab-btn">Top Scorers</button>
+                    <button class="tab-btn">My Stats</button>
+                </div>
+            </div>
+            
+            <!-- League Table -->
+            <div class="glass-card p-6 opacity-0 translate-y-6" id="league-table">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="text-text-secondary text-xs uppercase tracking-wider border-b border-white/10">
+                                <th class="text-left py-3 px-4">Pos</th>
+                                <th class="text-left py-3 px-4">Team</th>
+                                <th class="text-center py-3 px-4">P</th>
+                                <th class="text-center py-3 px-4">W</th>
+                                <th class="text-center py-3 px-4">D</th>
+                                <th class="text-center py-3 px-4">L</th>
+                                <th class="text-center py-3 px-4">GF</th>
+                                <th class="text-center py-3 px-4">GA</th>
+                                <th class="text-center py-3 px-4">GD</th>
+                                <th class="text-center py-3 px-4">Pts</th>
+                                <th class="text-center py-3 px-4">Form</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-accent-gold/20 text-accent-gold flex items-center justify-center font-bold text-xs">1</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center text-xs font-bold">MC</div>
+                                        <span class="font-semibold">Man City FC</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">10</td>
+                                <td class="py-4 px-4 text-center">1</td>
+                                <td class="py-4 px-4 text-center">1</td>
+                                <td class="py-4 px-4 text-center text-accent-green">32</td>
+                                <td class="py-4 px-4 text-center text-accent-red">8</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+24</td>
+                                <td class="py-4 px-4 text-center font-bold text-accent-gold">31</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-bg-elevated text-text-secondary flex items-center justify-center font-bold text-xs">2</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center text-xs font-bold">AR</div>
+                                        <span class="font-semibold">Arsenal FC</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">9</td>
+                                <td class="py-4 px-4 text-center">2</td>
+                                <td class="py-4 px-4 text-center">1</td>
+                                <td class="py-4 px-4 text-center text-accent-green">28</td>
+                                <td class="py-4 px-4 text-center text-accent-red">10</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+18</td>
+                                <td class="py-4 px-4 text-center font-bold text-accent-gold">29</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 bg-accent-gold/5 hover:bg-accent-gold/10 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-accent-gold text-bg-dark flex items-center justify-center font-bold text-xs">3</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center text-xs font-bold">PL</div>
+                                        <span class="font-semibold text-accent-gold">Your Team</span>
+                                        <i data-lucide="star" class="w-4 h-4 text-accent-gold fill-accent-gold"></i>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">8</td>
+                                <td class="py-4 px-4 text-center">2</td>
+                                <td class="py-4 px-4 text-center">2</td>
+                                <td class="py-4 px-4 text-center text-accent-green">26</td>
+                                <td class="py-4 px-4 text-center text-accent-red">12</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+14</td>
+                                <td class="py-4 px-4 text-center font-bold text-accent-gold">26</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-red/20 text-accent-red text-xs flex items-center justify-center">L</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-bg-elevated text-text-secondary flex items-center justify-center font-bold text-xs">4</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-700 to-red-900 flex items-center justify-center text-xs font-bold">LIV</div>
+                                        <span class="font-semibold">Liverpool FC</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">7</td>
+                                <td class="py-4 px-4 text-center">3</td>
+                                <td class="py-4 px-4 text-center">2</td>
+                                <td class="py-4 px-4 text-center text-accent-green">24</td>
+                                <td class="py-4 px-4 text-center text-accent-red">14</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+10</td>
+                                <td class="py-4 px-4 text-center font-bold text-white">24</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-red/20 text-accent-red text-xs flex items-center justify-center">L</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-bg-elevated text-text-secondary flex items-center justify-center font-bold text-xs">5</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-white to-gray-300 flex items-center justify-center text-xs font-bold text-bg-dark">TOT</div>
+                                        <span class="font-semibold">Tottenham</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">6</td>
+                                <td class="py-4 px-4 text-center">3</td>
+                                <td class="py-4 px-4 text-center">3</td>
+                                <td class="py-4 px-4 text-center text-accent-green">22</td>
+                                <td class="py-4 px-4 text-center text-accent-red">16</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+6</td>
+                                <td class="py-4 px-4 text-center font-bold text-white">21</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-red/20 text-accent-red text-xs flex items-center justify-center">L</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-red/20 text-accent-red text-xs flex items-center justify-center">L</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                <td class="py-4 px-4"><span class="w-6 h-6 rounded bg-bg-elevated text-text-secondary flex items-center justify-center font-bold text-xs">6</span></td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-700 flex items-center justify-center text-xs font-bold">CHE</div>
+                                        <span class="font-semibold">Chelsea FC</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-4 text-center text-text-secondary">12</td>
+                                <td class="py-4 px-4 text-center">5</td>
+                                <td class="py-4 px-4 text-center">4</td>
+                                <td class="py-4 px-4 text-center">3</td>
+                                <td class="py-4 px-4 text-center text-accent-green">19</td>
+                                <td class="py-4 px-4 text-center text-accent-red">15</td>
+                                <td class="py-4 px-4 text-center text-accent-green">+4</td>
+                                <td class="py-4 px-4 text-center font-bold text-white">19</td>
+                                <td class="py-4 px-4">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                        <span class="w-5 h-5 rounded bg-accent-gold/20 text-accent-gold text-xs flex items-center justify-center">D</span>
+                                        <span class="w-5 h-5 rounded bg-accent-red/20 text-accent-red text-xs flex items-center justify-center">L</span>
+                                        <span class="w-5 h-5 rounded bg-accent-green/20 text-accent-green text-xs flex items-center justify-center">W</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Top Scorers -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="top-scorer-1">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-accent-gold to-orange-500 flex items-center justify-center text-2xl font-black text-bg-dark">1</div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">E. Haaland</h4>
+                            <p class="text-text-muted text-sm">Your Team</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-3xl font-black text-accent-gold">14</p>
+                            <p class="text-text-muted text-xs">Goals</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="top-scorer-2">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-bg-elevated flex items-center justify-center text-2xl font-black text-text-secondary">2</div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">M. Salah</h4>
+                            <p class="text-text-muted text-sm">Liverpool FC</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-3xl font-black text-white">11</p>
+                            <p class="text-text-muted text-xs">Goals</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-5 opacity-0 translate-y-6" id="top-scorer-3">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-bg-elevated flex items-center justify-center text-2xl font-black text-text-secondary">3</div>
+                        <div class="flex-1">
+                            <h4 class="font-bold">Son Heung-min</h4>
+                            <p class="text-text-muted text-sm">Tottenham</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-3xl font-black text-white">9</p>
+                            <p class="text-text-muted text-xs">Goals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-gold to-orange-500 flex items-center justify-center">
+                        <i data-lucide="trophy" class="w-5 h-5 text-bg-dark"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold">ProLeague FC</h3>
+                        <p class="text-text-muted text-xs">The ultimate football management experience</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Help</a>
+                    <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Terms</a>
+                    <a href="#" class="text-text-secondary hover:text-white text-sm transition-colors">Privacy</a>
+                </div>
+            </div>
+            <p class="text-text-muted text-xs text-center mt-6">© 2024 ProLeague FC. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 glass-card-gold px-6 py-4 rounded-xl transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div class="flex items-center gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-accent-gold"></i>
+            <span id="toast-message" class="font-semibold">Lineup saved successfully!</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Register GSAP ScrollTrigger
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Dashboard Cards Animation
+            gsap.to('#card-team-rating', { opacity: 1, y: 0, duration: 0.6, delay: 0.1, ease: 'power2.out' });
+            gsap.to('#card-squad-value', { opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: 'power2.out' });
+            gsap.to('#card-league-position', { opacity: 1, y: 0, duration: 0.6, delay: 0.3, ease: 'power2.out' });
+            gsap.to('#card-next-match', { opacity: 1, y: 0, duration: 0.6, delay: 0.4, ease: 'power2.out' });
+            
+            // Match History & Quick Actions
+            gsap.to('#match-history', { opacity: 1, y: 0, duration: 0.6, delay: 0.5, ease: 'power2.out' });
+            gsap.to('#quick-actions', { opacity: 1, y: 0, duration: 0.6, delay: 0.6, ease: 'power2.out' });
+            
+            // Player Cards Animation
+            ScrollTrigger.create({
+                trigger: '#squad',
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.to('.player-card', { 
+                        opacity: 1, 
+                        scale: 1, 
+                        duration: 0.5, 
+                        stagger: 0.08, 
+                        ease: 'back.out(1.4)' 
+                    });
+                },
+                once: true
+            });
+            
+            // Market Cards Animation
+            ScrollTrigger.create({
+                trigger: '#market',
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.to('.market-card', { 
+                        opacity: 1, 
+                        scale: 1, 
+                        duration: 0.5, 
+                        stagger: 0.08, 
+                        ease: 'back.out(1.4)' 
+                    });
+                },
+                once: true
+            });
+            
+            // League Table & Top Scorers
+            ScrollTrigger.create({
+                trigger: '#leaderboard',
+                start: 'top 80%',
+                onEnter: () => {
+                    gsap.to('#league-table', { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' });
+                    gsap.to('#top-scorer-1', { opacity: 1, y: 0, duration: 0.5, delay: 0.2, ease: 'power2.out' });
+                    gsap.to('#top-scorer-2', { opacity: 1, y: 0, duration: 0.5, delay: 0.3, ease: 'power2.out' });
+                    gsap.to('#top-scorer-3', { opacity: 1, y: 0, duration: 0.5, delay: 0.4, ease: 'power2.out' });
+                },
+                once: true
+            });
+            
+            // Tab functionality
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const parent = this.parentElement;
+                    parent.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Navigation active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+        
+        // Player Slot Selection
+        function selectSlot(element) {
+            document.querySelectorAll('.player-slot').forEach(slot => {
+                slot.classList.remove('ring-4', 'ring-accent-gold');
+            });
+            element.classList.add('ring-4', 'ring-accent-gold');
+        }
+        
+        // Save Lineup
+        function saveLineup() {
+            const toast = document.getElementById('toast');
+            const message = document.getElementById('toast-message');
+            
+            message.textContent = 'Lineup saved successfully!';
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+        
+        // Buy Player
+        document.querySelectorAll('.market-card .btn-primary').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const toast = document.getElementById('toast');
+                const message = document.getElementById('toast-message');
+                
+                message.textContent = 'Player purchased successfully!';
+                toast.classList.remove('translate-y-20', 'opacity-0');
+                
+                setTimeout(() => {
+                    toast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>
