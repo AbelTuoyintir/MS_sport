@@ -133,6 +133,16 @@ class TeamRegistrationController extends Controller
                     'phone' => $ownerData['phone'],
                     'is_primary' => $index === 0,
                 ]);
+
+                if ($index === 0) {
+                    \App\Models\User::create([
+                        'name' => $ownerData['full_name'],
+                        'email' => $ownerData['email'],
+                        'password' => $teamData['password'],
+                        'role' => 'manager',
+                        'team_id' => $team->id,
+                    ]);
+                }
             }
 
             DB::commit();

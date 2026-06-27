@@ -35,6 +35,11 @@ class Team extends Model
         return $this->hasOne(Payment::class);
     }
 
+    public function players()
+    {
+        return $this->hasMany(Player::class);
+    }
+
     public static function generateReferenceCode()
     {
         do {
