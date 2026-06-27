@@ -583,8 +583,16 @@
 </footer>
 
 <script>
-// Data (same as before)
-const STANDINGS = [
+// Data from server
+const STANDINGS = @json($standings);
+const ALL_MATCHES = @json($recent_games);
+const NEWS_DATA = @json($news);
+const SCORERS = @json($top_scorers);
+const ASSISTS = []; // Not yet implemented in backend
+const CLUBS_DATA = @json($all_teams);
+
+// Legacy fallback data (to keep the structure working if DB is empty)
+const STANDINGS_LEGACY = [
   {pos:1,n:'Man City',b:'MC',c:'#1a3cff',p:32,w:22,d:6,l:4,gf:68,ga:28,pts:72,form:['w','w','w','d','w'],z:'cl'},
   {pos:2,n:'Arsenal',b:'ARS',c:'#ef0107',p:32,w:20,d:6,l:6,gf:60,ga:32,pts:66,form:['l','w','w','w','d'],z:'cl'},
   {pos:3,n:'Liverpool',b:'LIV',c:'#d00027',p:32,w:19,d:7,l:6,gf:65,ga:34,pts:64,form:['w','w','d','l','w'],z:'cl'},
@@ -599,51 +607,14 @@ const STANDINGS = [
   {pos:20,n:'Sheffield Utd',b:'SHU',c:'#e21a23',p:32,w:3,d:5,l:24,gf:22,ga:80,pts:14,form:['l','l','l','l','d'],z:'rel'},
 ];
 
-const SCORERS = [
+const SCORERS_LEGACY = [
   {nm:'E. Haaland',club:'Man City',nat:'🇳🇴',g:24,p:100,rc:'g1'},
   {nm:'O. Watkins',club:'Aston Villa',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:18,p:75,rc:'g2'},
   {nm:'A. Lacazette',club:'Arsenal',nat:'🇫🇷',g:15,p:63,rc:'g3'},
-  {nm:'M. Salah',club:'Liverpool',nat:'🇪🇬',g:14,p:58,rc:''},
-  {nm:'J. Wilson',club:'Newcastle',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:13,p:54,rc:''},
-  {nm:'S. Solanke',club:'Spurs',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:12,p:50,rc:''},
-  {nm:'C. Palmer',club:'Chelsea',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:11,p:46,rc:''},
 ];
 
-const ASSISTS = [
-  {nm:'K. De Bruyne',club:'Man City',nat:'🇧🇪',g:16,p:100,rc:'g1'},
-  {nm:'B. Saka',club:'Arsenal',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:13,p:81,rc:'g2'},
-  {nm:'T. Alexander-Arnold',club:'Liverpool',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:11,p:69,rc:'g3'},
-  {nm:'C. Palmer',club:'Chelsea',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:10,p:63,rc:''},
-  {nm:'J. Maddison',club:'Spurs',nat:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',g:9,p:56,rc:''},
-];
-
-const ALL_MATCHES = [
-  {h:'Man City',hb:'MC',hc:'#1a3cff',a:'Arsenal',ab:'ARS',ac:'#ef0107',score:'3–1',status:'LIVE 67\'',type:'live',venue:'Etihad Stadium',date:'Today · 15:00'},
-  {h:'Tottenham',hb:'TOT',hc:'#132257',a:'Chelsea',ab:'CHE',ac:'#034694',score:'0–0',status:'LIVE 44\'',type:'live',venue:'Spurs Stadium',date:'Today · 15:00'},
-  {h:'Liverpool',hb:'LIV',hc:'#d00027',a:'Everton',ab:'EVE',ac:'#003399',score:'vs',status:'18:30',type:'ns',venue:'Anfield',date:'Today · 18:30'},
-  {h:'Man Utd',hb:'MUN',hc:'#e21a23',a:'Wolves',ab:'WOL',ac:'#fdb913',score:'vs',status:'Tomorrow',type:'ns',venue:'Old Trafford',date:'Apr 7 · 14:00'},
-  {h:'Aston Villa',hb:'AVL',hc:'#6c1d45',a:'Brighton',ab:'BHA',ac:'#0057b8',score:'vs',status:'Apr 7',type:'ns',venue:'Villa Park',date:'Apr 7 · 16:30'},
-  {h:'Aston Villa',hb:'AVL',hc:'#6c1d45',a:'Newcastle',ab:'NEW',ac:'#241f20',score:'2–2',status:'FT',type:'ft',venue:'Villa Park',date:'Apr 5'},
-  {h:'Man Utd',hb:'MUN',hc:'#e21a23',a:'Brighton',ab:'BHA',ac:'#0057b8',score:'1–3',status:'FT',type:'ft',venue:'Old Trafford',date:'Apr 5'},
-  {h:'Wolves',hb:'WOL',hc:'#fdb913',a:'Brentford',ab:'BRE',ac:'#d20000',score:'0–1',status:'FT',type:'ft',venue:'Molineux',date:'Apr 5'},
-];
-
-const CLUBS = [
-  {n:'Man City',b:'MC',c:'#1a3cff'},{n:'Arsenal',b:'ARS',c:'#ef0107'},{n:'Liverpool',b:'LIV',c:'#d00027'},
-  {n:'Aston Villa',b:'AVL',c:'#6c1d45'},{n:'Tottenham',b:'TOT',c:'#132257'},{n:'Chelsea',b:'CHE',c:'#034694'},
-  {n:'Newcastle',b:'NEW',c:'#241f20'},{n:'Man Utd',b:'MUN',c:'#e21a23'},{n:'Brighton',b:'BHA',c:'#0057b8'},
-  {n:'West Ham',b:'WHU',c:'#7a263a'},{n:'Wolves',b:'WOL',c:'#fdb913'},{n:'Everton',b:'EVE',c:'#003399'},
-  {n:'Crystal Palace',b:'CRY',c:'#1b458f'},{n:'Fulham',b:'FUL',c:'#cc0000'},{n:'Brentford',b:'BRE',c:'#d20000'},
-  {n:'Nottm Forest',b:'NFO',c:'#e53233'},{n:'Bournemouth',b:'BOU',c:'#da291c'},{n:'Luton',b:'LUT',c:'#f78f1e'},
-  {n:'Burnley',b:'BUR',c:'#6c1d45'},{n:'Sheffield Utd',b:'SHU',c:'#e21a23'},
-];
-
-const NEWS_DATA = [
-  {title:'Man City edge closer to fourth consecutive Premier Division title',tag:'title',tagLabel:'Title Race',time:'2 hours ago',icon:'🏆',bg:'linear-gradient(135deg,#1a2a0a,#0d1a07)',featured:true,excerpt:'Pep Guardiola\'s side moved five points clear at the summit.'},
-  {title:'Haaland breaks all-time single season goal record',tag:'stats',tagLabel:'Stats',time:'5 hours ago',icon:'⚽',bg:'linear-gradient(135deg,#0a1a2a,#06101a)',excerpt:'The Norwegian striker netted his 24th league goal.'},
-  {title:'Three key players ruled out for Merseyside Derby',tag:'injury',tagLabel:'Injury',time:'Yesterday',icon:'🚑',bg:'linear-gradient(135deg,#2a0a0a,#1a0606)',excerpt:'Arne Slot confirmed that the trio will miss the fixture.'},
-  {title:'£52m deal confirmed: Olise completes Bayern move',tag:'transfer',tagLabel:'Transfer',time:'2 days ago',icon:'🔄',bg:'linear-gradient(135deg,#0a1a2a,#061018)',excerpt:'The Crystal Palace winger has officially completed his move.'},
-  {title:'Matchweek 33 preview — who are the favourites?',tag:'preview',tagLabel:'Preview',time:'3 days ago',icon:'📋',bg:'linear-gradient(135deg,#121820,#0a1016)',excerpt:'Our pundits give their verdict on the biggest games.'},
+const NEWS_DATA_LEGACY = [
+  {title:'Welcome to MP League',tag:'title',tagLabel:'General',time:'Now',icon:'🏆',bg:'linear-gradient(135deg,#1a2a0a,#0d1a07)',excerpt:'The new season is about to begin.'},
 ];
 
 const AWARDS_DATA = [
@@ -664,68 +635,112 @@ function fd(arr) {
 }
 
 function renderTable() {
+  const data = STANDINGS.length > 0 ? STANDINGS : STANDINGS_LEGACY;
   const head = `<thead><tr class="text-[8px] sm:text-[9px] font-bold tracking-[0.8px] text-muted uppercase"><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">#</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-left">Club</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">P</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">W</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">D</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">L</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">GD</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">Pts</th><th class="px-2 sm:px-3 py-2 border-b border-border-dark text-center">Form</th></tr></thead>`;
-  const body = STANDINGS.map(t => {
-    const gd = t.gf - t.ga;
+  const body = data.map((t, index) => {
+    const pos = index + 1;
+    const n = t.name || t.n;
+    const b = t.b || n.substring(0, 2).toUpperCase();
+    const c = t.c || '#f0c040';
+    const p = t.played !== undefined ? t.played : t.p;
+    const w = t.won !== undefined ? t.won : t.w;
+    const d = t.drawn !== undefined ? t.drawn : t.d;
+    const l = t.lost !== undefined ? t.lost : t.l;
+    const gd = t.gd !== undefined ? t.gd : (t.gf - t.ga);
+    const pts = t.points !== undefined ? t.points : t.pts;
+    const form = t.form || [];
     const gds = (gd > 0 ? '+' : '') + gd;
     const pc = t.z === 'cl' ? 'text-accent' : t.z === 'eur' ? 'text-custom-green' : t.z === 'rel' ? 'text-custom-red' : 'text-muted';
-    return `<tr class="hover:bg-white/5 transition-colors duration-150"><td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center"><span class="font-heading font-extrabold text-[11px] sm:text-[13px] ${pc}">${t.pos}</span></td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-left"><div class="flex items-center gap-1.5 sm:gap-2">${tb(t.b, t.c, 16)} <span class="text-[10px] sm:text-[11px]">${t.n}</span></div></td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${t.p}</td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${t.w}</td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${t.d}</td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${t.l}</td>
+    return `<tr class="hover:bg-white/5 transition-colors duration-150"><td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center"><span class="font-heading font-extrabold text-[11px] sm:text-[13px] ${pc}">${pos}</span></td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-left"><div class="flex items-center gap-1.5 sm:gap-2">${tb(b, c, 16)} <span class="text-[10px] sm:text-[11px]">${n}</span></div></td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${p}</td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${w}</td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${d}</td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]">${l}</td>
       <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center text-[10px] sm:text-[11px]" style="color:${gd >= 0 ? '#22c55e' : '#ff3b3b'}">${gds}</td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center"><span class="font-heading font-black text-xs sm:text-sm">${t.pts}</span></td>
-      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center">${fd(t.form)}</td></tr>`;
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center"><span class="font-heading font-black text-xs sm:text-sm">${pts}</span></td>
+      <td class="px-2 sm:px-3 py-2 border-b border-border-dark/70 text-center">${fd(form)}</td></tr>`;
   }).join('');
   document.getElementById('public-table').innerHTML = head + '<tbody>' + body + '</tbody>';
 }
 
 function renderStats(data, id) {
-  document.getElementById(id).innerHTML = data.map((s, i) => `
+  const finalData = data.length > 0 ? data : SCORERS_LEGACY;
+  document.getElementById(id).innerHTML = finalData.map((s, i) => {
+    const name = s.name || s.nm;
+    const club = s.team ? s.team.team_name : (s.club || 'N/A');
+    const goals = s.goals !== undefined ? s.goals : s.g;
+    const progress = s.pct || (goals * 4);
+    return `
     <div class="px-3 sm:px-4 py-2 sm:py-2.5 border-b border-border-dark/70 flex items-center gap-2 hover:bg-white/5 transition-colors duration-150">
-      <div class="font-display text-base sm:text-lg ${s.rc === 'g1' ? 'text-gold' : s.rc === 'g2' ? 'text-muted2' : s.rc === 'g3' ? 'text-amber-700' : 'text-muted'} w-4 sm:w-5 text-center">${i + 1}</div>
-      <div class="w-6 h-6 sm:w-[30px] sm:h-[30px] rounded-full flex items-center justify-center text-xs sm:text-sm font-extrabold flex-shrink-0 bg-accent/10 text-accent">${s.nat}</div>
-      <div class="flex-1"><div class="text-[10px] sm:text-xs font-semibold text-text-light">${s.nm}</div><div class="text-[8px] sm:text-[9px] text-muted">${s.club}</div></div>
-      <div class="w-10 sm:w-14 h-0.5 bg-bg-dark4 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-accent to-accent2 rounded-full transition-all duration-700" style="width:${s.p}%"></div></div>
-      <div class="font-display text-base sm:text-xl text-accent min-w-[24px] sm:min-w-[28px] text-right">${s.g}</div>
-    </div>`).join('');
+      <div class="font-display text-base sm:text-lg ${i===0 ? 'text-gold' : i===1 ? 'text-muted2' : i===2 ? 'text-amber-700' : 'text-muted'} w-4 sm:w-5 text-center">${i + 1}</div>
+      <div class="w-6 h-6 sm:w-[30px] sm:h-[30px] rounded-full flex items-center justify-center text-xs sm:text-sm font-extrabold flex-shrink-0 bg-accent/10 text-accent">${s.nationality || s.nat || '🏳️'}</div>
+      <div class="flex-1"><div class="text-[10px] sm:text-xs font-semibold text-text-light">${name}</div><div class="text-[8px] sm:text-[9px] text-muted">${club}</div></div>
+      <div class="w-10 sm:w-14 h-0.5 bg-bg-dark4 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-accent to-accent2 rounded-full transition-all duration-700" style="width:${progress}%"></div></div>
+      <div class="font-display text-base sm:text-xl text-accent min-w-[24px] sm:min-w-[28px] text-right">${goals}</div>
+    </div>`}).join('');
 }
 
 let activeMatchTab = 'all';
 function renderMatches(tab = 'all') {
   activeMatchTab = tab;
   let data = ALL_MATCHES;
-  if (tab === 'live') data = ALL_MATCHES.filter(m => m.type === 'live');
-  else if (tab === 'today') data = ALL_MATCHES.filter(m => m.date.includes('Today') || m.type === 'live');
-  else if (tab === 'upcoming') data = ALL_MATCHES.filter(m => m.type === 'ns');
-  else if (tab === 'results') data = ALL_MATCHES.filter(m => m.type === 'ft');
+  if (data.length === 0) {
+      document.getElementById('matches-grid').innerHTML = '<div class="col-span-full p-12 text-center text-gray-500">No matches scheduled yet.</div>';
+      return;
+  }
+  if (tab === 'live') data = ALL_MATCHES.filter(m => m.status === 'live');
+  else if (tab === 'upcoming') data = ALL_MATCHES.filter(m => m.status === 'upcoming');
+  else if (tab === 'results') data = ALL_MATCHES.filter(m => m.status === 'finished');
   
-  document.getElementById('matches-grid').innerHTML = data.map(m => `
-    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden cursor-pointer transition-all duration-200 hover:border-border-dark2 hover:-translate-y-0.5">
+  document.getElementById('matches-grid').innerHTML = data.map(m => {
+    const homeName = m.home_team ? m.home_team.team_name : (m.h || 'N/A');
+    const awayName = m.away_team ? m.away_team.team_name : (m.a || 'N/A');
+    const score = m.status === 'upcoming' ? 'vs' : `${m.home_score}–${m.away_score}`;
+    const isUpcoming = m.status === 'upcoming';
+
+    return `
+    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden transition-all duration-200 hover:border-border-dark2">
       <div class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 border-b border-border-dark flex flex-wrap items-center justify-between gap-1">
-        <div class="text-[8px] sm:text-[9px] font-bold text-muted tracking-[0.5px]">Premier Division · MW 32</div>
-        <div class="text-[7px] sm:text-[8px] font-extrabold tracking-[0.8px] px-1.5 sm:px-2 py-0.5 rounded uppercase ${m.type === 'live' ? 'bg-custom-red/15 text-custom-red animate-pulse-live' : m.type === 'ns' ? 'bg-accent/10 text-accent' : 'bg-muted/15 text-muted'}">${m.status}</div>
+        <div class="text-[8px] sm:text-[9px] font-bold text-muted tracking-[0.5px]">MW ${m.matchweek || 'N/A'}</div>
+        <div class="text-[7px] sm:text-[8px] font-extrabold tracking-[0.8px] px-1.5 sm:px-2 py-0.5 rounded uppercase ${m.status === 'live' ? 'bg-custom-red/15 text-custom-red animate-pulse-live' : 'bg-accent/10 text-accent'}">${m.status}</div>
       </div>
       <div class="px-2.5 sm:px-3.5 py-3 sm:py-4">
         <div class="flex items-center justify-between gap-2">
           <div class="flex flex-col items-center gap-1 flex-1">
-            ${tb(m.hb, m.hc, 28)}
-            <div class="font-heading text-[10px] sm:text-xs font-bold text-text-light text-center">${m.h}</div>
+            ${tb(homeName.substring(0,2).toUpperCase(), m.home_team?.primary_color || '#ccc', 28)}
+            <div class="font-heading text-[10px] sm:text-xs font-bold text-text-light text-center">${homeName}</div>
           </div>
-          <div class="font-display text-xl sm:text-[30px] ${m.type === 'live' ? 'text-custom-red' : 'text-text-light'} px-1 sm:px-2 text-center min-w-[40px] sm:min-w-[52px]">${m.score}</div>
+          <div class="font-display text-xl sm:text-[30px] text-text-light px-1 sm:px-2 text-center min-w-[40px] sm:min-w-[52px]">${score}</div>
           <div class="flex flex-col items-center gap-1 flex-1">
-            ${tb(m.ab, m.ac, 28)}
-            <div class="font-heading text-[10px] sm:text-xs font-bold text-text-light text-center">${m.a}</div>
+            ${tb(awayName.substring(0,2).toUpperCase(), m.away_team?.primary_color || '#ccc', 28)}
+            <div class="font-heading text-[10px] sm:text-xs font-bold text-text-light text-center">${awayName}</div>
           </div>
         </div>
+
+        ${isUpcoming ? `
+          <div class="mt-4 pt-3 border-t border-border-dark">
+            <button onclick="togglePrediction(${m.id})" class="w-full text-[8px] text-accent font-bold uppercase py-1 border border-accent/20 rounded hover:bg-accent/5">Predict Score</button>
+            <form id="pred-${m.id}" action="{{ route('predictions.store') }}" method="POST" class="hidden mt-3 space-y-2">
+              @csrf
+              <input type="hidden" name="game_id" value="${m.id}">
+              <input type="text" name="user_name" placeholder="Your Name" required class="w-full bg-bg-dark border border-border-dark rounded px-2 py-1 text-[9px] text-white outline-none">
+              <div class="flex items-center gap-2">
+                <input type="number" name="home_score_prediction" placeholder="Home" required class="w-1/2 bg-bg-dark border border-border-dark rounded px-2 py-1 text-[9px] text-white outline-none">
+                <span class="text-gray-600">-</span>
+                <input type="number" name="away_score_prediction" placeholder="Away" required class="w-1/2 bg-bg-dark border border-border-dark rounded px-2 py-1 text-[9px] text-white outline-none">
+              </div>
+              <button type="submit" class="w-full bg-accent text-bg-dark font-bold text-[8px] py-1 rounded">Submit</button>
+            </form>
+          </div>
+        ` : ''}
       </div>
-      <div class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 border-t border-border-dark flex flex-wrap items-center justify-between gap-1 text-[8px] sm:text-[9px] text-muted">
-        <div class="flex items-center gap-1"><svg class="w-2 h-2 sm:w-2.5 sm:h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>${m.venue}</div>
-        <div>${m.date}</div>
-      </div>
-    </div>`).join('');
+    </div>`}).join('');
+}
+
+function togglePrediction(id) {
+    const el = document.getElementById('pred-' + id);
+    if(el) el.classList.toggle('hidden');
 }
 
 function switchMatchTab(el, tab) {
@@ -736,42 +751,92 @@ function switchMatchTab(el, tab) {
 }
 
 function renderClubs() {
-  const double = [...CLUBS, ...CLUBS];
-  document.getElementById('clubs-track').innerHTML = double.map(c => `
+  const data = (CLUBS_DATA && CLUBS_DATA.length > 0) ? CLUBS_DATA : [];
+  if (data.length === 0) return;
+  const double = [...data, ...data];
+  document.getElementById('clubs-track').innerHTML = double.map(c => {
+    const name = c.team_name || c.n;
+    const badge = name.substring(0, 2).toUpperCase();
+    const color = c.primary_color || c.c || '#ccc';
+
+    return `
     <div class="flex items-center gap-1.5 sm:gap-2 bg-bg-dark3 border border-border-dark rounded-lg px-2.5 sm:px-3.5 py-1.5 sm:py-2 cursor-pointer transition-all duration-150 flex-shrink-0 hover:border-border-dark2 hover:bg-bg-dark4">
-      <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[7px] sm:text-[8px] font-black flex-shrink-0" style="background:${c.c};color:#fff">${c.b}</div>
-      <div class="font-heading text-[10px] sm:text-[11px] font-bold text-text-light whitespace-nowrap">${c.n}</div>
-    </div>`).join('');
+      <div class="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-[7px] sm:text-[8px] font-black flex-shrink-0" style="background:${color};color:#fff">${badge}</div>
+      <div class="font-heading text-[10px] sm:text-[11px] font-bold text-text-light whitespace-nowrap">${name}</div>
+    </div>`}).join('');
 }
 
 function renderNews() {
   const grid = document.getElementById('news-grid');
-  grid.innerHTML = NEWS_DATA.map((n, i) => `
-    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden cursor-pointer transition-all duration-200 hover:border-border-dark2 hover:-translate-y-0.5">
-      <div class="${i === 0 ? 'h-48 sm:h-60' : 'h-36 sm:h-[180px]'} flex items-center justify-center text-5xl sm:text-${i === 0 ? '7xl' : '6xl'} relative overflow-hidden" style="background:${n.bg};font-size:${i === 0 ? '56px' : '44px'}">
-        ${n.icon}
+  const data = NEWS_DATA.length > 0 ? NEWS_DATA : NEWS_DATA_LEGACY;
+  grid.innerHTML = data.map((n, i) => {
+    const title = n.title;
+    const tag = n.tag || 'title';
+    const tagLabel = n.tagLabel || 'News';
+    const time = n.time || new Date(n.created_at).toLocaleDateString();
+    const excerpt = n.excerpt || (n.content ? n.content.substring(0, 100) + '...' : '');
+    const commentsCount = n.comments ? n.comments.length : 0;
+
+    return `
+    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden transition-all duration-200 hover:border-border-dark2">
+      <div class="${i === 0 ? 'h-48 sm:h-60' : 'h-36 sm:h-[180px]'} flex items-center justify-center text-5xl relative overflow-hidden" style="background:${n.bg || 'linear-gradient(135deg,#121820,#0a1016)'};">
+        ${n.image_path ? `<img src="/storage/${n.image_path}" class="w-full h-full object-cover">` : (n.icon || '⚽')}
         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent"></div>
-        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 text-[7px] sm:text-[8px] font-extrabold tracking-[1px] px-1.5 sm:px-2 py-0.5 rounded uppercase ${n.tag === 'title' ? 'bg-gold/15 text-gold border border-gold/25' : n.tag === 'stats' ? 'bg-custom-green/15 text-custom-green border border-custom-green/25' : n.tag === 'injury' ? 'bg-custom-red/15 text-custom-red border border-custom-red/25' : n.tag === 'transfer' ? 'bg-accent/15 text-accent border border-accent/25' : 'bg-muted2/10 text-muted2 border border-muted2/20'}">${n.tagLabel}</div>
+        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 text-[7px] sm:text-[8px] font-extrabold tracking-[1px] px-1.5 sm:px-2 py-0.5 rounded uppercase ${tag === 'title' ? 'bg-gold/15 text-gold border border-gold/25' : tag === 'stats' ? 'bg-custom-green/15 text-custom-green border border-custom-green/25' : tag === 'injury' ? 'bg-custom-red/15 text-custom-red border border-custom-red/25' : tag === 'transfer' ? 'bg-accent/15 text-accent border border-accent/25' : 'bg-muted2/10 text-muted2 border border-muted2/20'}">${tagLabel}</div>
       </div>
       <div class="${i === 0 ? 'p-3 sm:p-4' : 'p-2.5 sm:p-3.5'}">
-        <div class="${i === 0 ? 'text-xs sm:text-base' : 'text-[11px] sm:text-[13px]'} font-heading font-bold text-text-light leading-tight mb-1">${n.title}</div>
-        ${i === 0 ? `<div class="text-[9px] sm:text-[10px] text-muted2 leading-relaxed mt-1.5 sm:mt-2 line-clamp-2">${n.excerpt}</div>` : ''}
-        <div class="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] text-muted mt-1.5 sm:mt-2">
-          <span class="flex items-center gap-0.5"><svg class="w-2 h-2 sm:w-2.5 sm:h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${n.time}</span>
-          <span>· MP League News</span>
+        <div class="${i === 0 ? 'text-xs sm:text-base' : 'text-[11px] sm:text-[13px]'} font-heading font-bold text-text-light leading-tight mb-1">${title}</div>
+        <div class="text-[9px] sm:text-[10px] text-muted2 leading-relaxed mt-1.5 line-clamp-2">${excerpt}</div>
+        <div class="flex items-center justify-between mt-3">
+            <div class="flex items-center gap-1.5 text-[8px] text-muted">
+              <span class="flex items-center gap-0.5"><svg class="w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${time}</span>
+            </div>
+            @auth
+            <div class="flex items-center gap-1 text-[8px] text-accent font-bold uppercase cursor-pointer" onclick="toggleComments(${n.id})">
+                ${commentsCount} Comments
+            </div>
+            @endauth
+        </div>
+        <div id="comments-${n.id}" class="hidden mt-4 pt-3 border-t border-border-dark">
+            <form action="{{ route('comments.store') }}" method="POST" class="flex gap-2">
+                @csrf
+                <input type="hidden" name="article_id" value="${n.id}">
+                <input type="hidden" name="user_name" value="{{ auth()->user()->name ?? 'Guest' }}">
+                <input type="text" name="content" placeholder="Add a comment..." required class="flex-1 bg-bg-dark border border-border-dark rounded px-2 py-1 text-[9px] text-white outline-none">
+                <button type="submit" class="bg-accent text-bg-dark font-bold text-[8px] px-2 py-1 rounded">Post</button>
+            </form>
         </div>
       </div>
-    </div>`).join('');
+    </div>`}).join('');
+}
+
+function toggleComments(id) {
+    const el = document.getElementById('comments-' + id);
+    if(el) el.classList.toggle('hidden');
 }
 
 function renderAwards() {
-  document.getElementById('awards-grid').innerHTML = AWARDS_DATA.map(a => `
-    <div class="bg-gold/5 border border-gold/15 rounded-xl p-3 sm:p-4 flex flex-col items-center gap-1.5 sm:gap-2 text-center cursor-pointer transition-all duration-200 hover:border-gold/30 hover:bg-gold/10 hover:-translate-y-0.5">
+  document.getElementById('awards-grid').innerHTML = AWARDS_DATA.map(a => {
+    const isVoting = a.name === 'Player of Season';
+
+    return `
+    <div class="bg-gold/5 border border-gold/15 rounded-xl p-3 sm:p-4 flex flex-col items-center gap-1.5 sm:gap-2 text-center transition-all duration-200 hover:border-gold/30 hover:bg-gold/10">
       <div class="text-2xl sm:text-3xl">${a.icon}</div>
       <div class="font-heading text-[10px] sm:text-xs font-bold text-gold uppercase tracking-[0.5px]">${a.name}</div>
       <div class="text-[11px] sm:text-xs font-semibold text-text-light">${a.winner}</div>
-      <div class="text-[8px] sm:text-[9px] text-muted">${a.detail}</div>
-    </div>`).join('');
+      <div class="text-[8px] sm:text-[9px] text-muted mb-2">${a.detail}</div>
+
+      ${isVoting && SCORERS.length > 0 ? `
+        <form action="{{ route('vote.store') }}" method="POST" class="w-full mt-2">
+            @csrf
+            <select name="player_id" required class="w-full bg-bg-dark border border-gold/20 rounded px-2 py-1 text-[9px] text-white outline-none mb-2">
+                <option value="">Choose Player</option>
+                ${SCORERS.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+            </select>
+            <button type="submit" class="w-full bg-gold text-bg-dark font-bold text-[8px] py-1 rounded">Vote Now</button>
+        </form>
+      ` : ''}
+    </div>`}).join('');
 }
 
 function startCountdown() {

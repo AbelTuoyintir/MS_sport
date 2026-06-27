@@ -3,7 +3,24 @@
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\VoteController;
+use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\ManagerController;
+use App\Http\Controllers\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
+
+// Auth routes
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// Public Interaction
+Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/vote', [VoteController::class, 'store'])->name('vote.store');
+Route::post('/predictions', [PredictionController::class, 'store'])->name('predictions.store');
 
 // Registration routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -26,7 +43,17 @@ Route::get('/api/team-status/{referenceCode}', [TeamRegistrationController::clas
 
 // Admin routes (protected)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/payments', [PaymentController::class, 'listPayments'])->name('admin.payments');
     Route::post('/payment/{paymentId}/verify', [PaymentController::class, 'manualVerify'])->name('admin.payment.verify');
     Route::post('/payment/{paymentId}/refund', [PaymentController::class, 'refundPayment'])->name('admin.payment.refund');
+});
+
+// Manager routes (protected)
+Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
+    Route::get('/dashboard', [ManagerController::class, 'dashboard'])->name('manager.dashboard');
+
+    Route::post('/players', [PlayerController::class, 'store'])->name('manager.players.store');
+    Route::put('/players/{id}', [PlayerController::class, 'update'])->name('manager.players.update');
+    Route::delete('/players/{id}', [PlayerController::class, 'destroy'])->name('manager.players.destroy');
 });

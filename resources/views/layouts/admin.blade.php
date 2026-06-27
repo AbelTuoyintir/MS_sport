@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manager Dashboard — MP League</title>
+    <title>Admin Dashboard — MP League</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
@@ -18,9 +18,6 @@
             font-family: 'Barlow', sans-serif;
             background-color: var(--bg-dark);
             color: #e8edf4;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(240, 192, 64, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(0, 229, 255, 0.05) 0%, transparent 40%);
         }
         .font-heading { font-family: 'Barlow Condensed', sans-serif; }
         .glass-card {
@@ -31,7 +28,6 @@
         }
         .text-accent-gold { color: var(--accent-gold); }
         .bg-accent-gold { background-color: var(--accent-gold); }
-        .bg-bg-dark { background-color: var(--bg-dark); }
     </style>
 </head>
 <body class="min-h-screen">
@@ -39,16 +35,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-accent-gold rounded flex items-center justify-center">
-                        <i data-lucide="layout-dashboard" class="w-5 h-5 text-black"></i>
+                    <div class="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-black"></i>
                     </div>
-                    <span class="font-black font-heading text-xl uppercase tracking-wider">Manager Panel</span>
+                    <span class="font-black font-heading text-xl uppercase tracking-wider">Admin Control</span>
                 </div>
                 <div class="flex items-center gap-6">
-                    <span class="text-sm text-gray-400">Welcome, {{ auth()->user()->name }}</span>
+                    <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-white transition-colors">Site Home</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-400 transition-colors">Sign Out</button>
+                        <button type="submit" class="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-400">Logout</button>
                     </form>
                 </div>
             </div>

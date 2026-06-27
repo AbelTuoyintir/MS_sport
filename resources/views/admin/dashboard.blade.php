@@ -1,27 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'sans': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0a0f1a 0%, #0d1117 100%);
-        }
-        
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
@@ -140,7 +119,7 @@
                         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Total</span>
                     </div>
                     <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">20</span>
+                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_teams'] }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs text-gray-400">0 changes this season</span>
@@ -159,13 +138,13 @@
                         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Players</span>
                     </div>
                     <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">487</span>
+                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_players'] }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 12</span>
+                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
                         <span class="text-xs text-gray-400">this month</span>
                     </div>
                 </div>
@@ -181,13 +160,13 @@
                         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Matches</span>
                     </div>
                     <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">294</span>
+                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_matches'] }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 10</span>
+                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
                         <span class="text-xs text-gray-400">this week</span>
                     </div>
                 </div>
@@ -204,13 +183,13 @@
                         <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Goals</span>
                     </div>
                     <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">812</span>
+                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_goals'] }}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                         </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 28</span>
+                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
                         <span class="text-xs text-gray-400">this week</span>
                     </div>
                 </div>
