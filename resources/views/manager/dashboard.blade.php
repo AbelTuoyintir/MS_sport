@@ -67,6 +67,43 @@
                 </div>
             </div>
         </div>
+
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-bold mb-4">Upcoming Fixtures</h3>
+            <div class="space-y-4">
+                @forelse($upcoming_games as $game)
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/5">
+                        <div class="text-[10px] text-gray-500 font-bold uppercase mb-1">Matchweek {{ $game->matchweek }}</div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="{{ $game->home_team_id == auth()->user()->team_id ? 'text-accent-gold font-bold' : '' }}">{{ $game->homeTeam->team_name }}</span>
+                            <span class="text-gray-600">vs</span>
+                            <span class="{{ $game->away_team_id == auth()->user()->team_id ? 'text-accent-gold font-bold' : '' }}">{{ $game->awayTeam->team_name }}</span>
+                        </div>
+                        <div class="text-[10px] text-gray-400 mt-2">{{ $game->kickoff->format('M d, H:i') }}</div>
+                    </div>
+                @empty
+                    <p class="text-gray-500 text-sm">No upcoming games scheduled.</p>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="glass-card p-6">
+            <h3 class="text-lg font-bold mb-4">Recent Results</h3>
+            <div class="space-y-4">
+                @forelse($recent_results as $result)
+                    <div class="bg-white/5 p-3 rounded-lg border border-white/5">
+                        <div class="flex justify-between items-center text-sm mb-1">
+                            <span class="{{ $result->home_team_id == auth()->user()->team_id ? 'font-bold' : '' }}">{{ $result->homeTeam->team_name }}</span>
+                            <span class="font-black text-accent-gold px-2">{{ $result->home_score }} - {{ $result->away_score }}</span>
+                            <span class="{{ $result->away_team_id == auth()->user()->team_id ? 'font-bold' : '' }}">{{ $result->awayTeam->team_name }}</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500 text-center uppercase">{{ $result->kickoff->format('M d, Y') }}</div>
+                    </div>
+                @empty
+                    <p class="text-gray-500 text-sm">No recent results.</p>
+                @endforelse
+            </div>
+        </div>
     </div>
 </div>
 

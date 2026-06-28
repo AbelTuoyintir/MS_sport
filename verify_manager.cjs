@@ -20,7 +20,7 @@ const { chromium } = require('playwright');
 
   // 3. Open Add Player modal
   await page.click('button:has-text("Add Player")');
-  await page.waitForSelector('#addPlayerModal', { state: 'visible' });
+  await page.waitForSelector('#add-player-modal', { state: 'visible' });
   await page.screenshot({ path: 'manager_modal.png' });
 
   await browser.close();
