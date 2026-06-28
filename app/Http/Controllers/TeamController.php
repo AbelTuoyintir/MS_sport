@@ -36,4 +36,25 @@ class TeamController extends Controller
 
         return view('teams.show', compact('team', 'recent_games'));
     }
+
+    public function update(Request $request, $id)
+    {
+        $team = Team::findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && auth()->user()->team_id != $id) {
+            return redirect()->back()->with('error', 'Unauthorized.');
+        }
+
+        $validated = $request->validate([
+            'team_name' => 'required|string|max:255',
+            'home_stadium' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'founded_year' => 'nullable|string|max:4',
+            'description' => 'nullable|string',
+        ]);
+
+        $team->update($validated);
+
+        return redirect()->back()->with('success', 'Team information updated.');
+    }
 }

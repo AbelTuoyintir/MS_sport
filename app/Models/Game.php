@@ -31,4 +31,14 @@ class Game extends Model
     {
         return $this->belongsTo(Team::class, 'away_team_id');
     }
+
+    public function events()
+    {
+        return $this->hasMany(MatchEvent::class);
+    }
+
+    public function squads()
+    {
+        return $this->hasMany(MatchSquad::class);
+    }
 }

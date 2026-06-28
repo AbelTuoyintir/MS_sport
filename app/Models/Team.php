@@ -18,6 +18,10 @@ class Team extends Model
         'password',
         'registration_status',
         'submitted_at',
+        'home_stadium',
+        'description',
+        'city',
+        'founded_year',
     ];
 
     public function owners()
@@ -38,6 +42,31 @@ class Team extends Model
     public function players()
     {
         return $this->hasMany(Player::class);
+    }
+
+    public function staff()
+    {
+        return $this->hasMany(Staff::class);
+    }
+
+    public function finances()
+    {
+        return $this->hasMany(Finance::class);
+    }
+
+    public function equipment()
+    {
+        return $this->hasMany(Equipment::class);
+    }
+
+    public function scoutReports()
+    {
+        return $this->hasMany(ScoutReport::class);
+    }
+
+    public function trainingSessions()
+    {
+        return $this->hasMany(TrainingSession::class);
     }
 
     public static function generateReferenceCode()

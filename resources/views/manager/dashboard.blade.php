@@ -3,7 +3,10 @@
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="md:col-span-2 space-y-6">
         <div class="glass-card p-6">
-            <h2 class="text-2xl font-bold mb-4">Team: {{ auth()->user()->team->team_name ?? 'N/A' }}</h2>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Team: {{ auth()->user()->team->team_name ?? 'N/A' }}</h2>
+                <button onclick="toggleModal('edit-team-modal')" class="text-accent-gold hover:underline text-sm font-bold">Edit Profile</button>
+            </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-white/5 p-4 rounded-xl">
                     <p class="text-gray-400 text-xs uppercase font-bold tracking-wider">Division</p>
@@ -19,7 +22,10 @@
         <div class="glass-card p-6">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-xl font-bold">My Squad</h3>
-                <button onclick="toggleModal('add-player-modal')" class="bg-accent-gold text-bg-dark px-4 py-2 rounded-lg font-bold text-sm">+ Add Player</button>
+                <div class="flex gap-2">
+                    <button onclick="toggleModal('add-player-modal')" class="bg-accent-gold text-bg-dark px-4 py-2 rounded-lg font-bold text-sm">+ Add Player</button>
+                    <button onclick="toggleModal('add-staff-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm">+ Add Staff</button>
+                </div>
             </div>
 
             @if(session('success'))
@@ -28,7 +34,12 @@
                 </div>
             @endif
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="mb-4 border-b border-white/10 flex gap-4">
+                <button onclick="switchSquadTab('players')" id="tab-players" class="pb-2 border-b-2 border-accent-gold font-bold">Players ({{ auth()->user()->team->players->count() }})</button>
+                <button onclick="switchSquadTab('staff')" id="tab-staff" class="pb-2 text-gray-400 font-bold">Staff ({{ $staff->count() }})</button>
+            </div>
+
+            <div id="players-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 @forelse(auth()->user()->team->players ?? [] as $player)
                     <div class="bg-white/5 p-4 rounded-xl flex items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
@@ -48,6 +59,29 @@
                     </div>
                 @empty
                     <p class="text-gray-500 text-center col-span-2 py-8">No players registered yet.</p>
+                @endforelse
+            </div>
+
+            <div id="staff-list" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                @forelse($staff as $member)
+                    <div class="bg-white/5 p-4 rounded-xl flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-blue-900/30 flex items-center justify-center font-bold text-blue-400">ST</div>
+                            <div>
+                                <p class="font-bold">{{ $member->name }}</p>
+                                <p class="text-gray-400 text-xs">{{ $member->role }}</p>
+                            </div>
+                        </div>
+                        <form action="{{ route('manager.staff.destroy', $member->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-400 p-2">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </form>
+                    </div>
+                @empty
+                    <p class="text-gray-500 text-center col-span-2 py-8">No staff members assigned.</p>
                 @endforelse
             </div>
         </div>
@@ -145,6 +179,93 @@
 function toggleModal(id) {
     const modal = document.getElementById(id);
     modal.classList.toggle('hidden');
+}
+<!-- Edit Team Modal -->
+<div id="edit-team-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-lg p-6">
+        <h3 class="text-xl font-bold mb-6">Edit Team Profile</h3>
+        <form action="{{ route('teams.update', auth()->user()->team_id) }}" method="POST" class="space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Team Name</label>
+                <input type="text" name="team_name" value="{{ auth()->user()->team->team_name }}" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Home Stadium</label>
+                    <input type="text" name="home_stadium" value="{{ auth()->user()->team->home_stadium }}" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">City</label>
+                    <input type="text" name="city" value="{{ auth()->user()->team->city }}" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Description</label>
+                <textarea name="description" rows="3" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">{{ auth()->user()->team->description }}</textarea>
+            </div>
+            <div class="flex gap-4 pt-4">
+                <button type="submit" class="flex-1 bg-accent-gold text-bg-dark font-bold py-3 rounded-lg">Update Profile</button>
+                <button type="button" onclick="toggleModal('edit-team-modal')" class="flex-1 bg-white/5 font-bold py-3 rounded-lg border border-white/10">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</script>
+<!-- Add Staff Modal -->
+<div id="add-staff-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+    <div class="glass-card w-full max-w-md p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold">Add Staff Member</h3>
+            <button onclick="toggleModal('add-staff-modal')" class="text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <form action="{{ route('manager.staff.store') }}" method="POST" class="space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Full Name</label>
+                <input type="text" name="name" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Role</label>
+                <select name="role" required class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+                    <option value="Head Coach">Head Coach</option>
+                    <option value="Assistant Coach">Assistant Coach</option>
+                    <option value="Doctor">Doctor</option>
+                    <option value="Physiotherapist">Physiotherapist</option>
+                    <option value="Kit Manager">Kit Manager</option>
+                    <option value="Scout">Scout</option>
+                </select>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg mt-4">Save Staff Member</button>
+        </form>
+    </div>
+</div>
+
+<script>
+function switchSquadTab(tab) {
+    const playersList = document.getElementById('players-list');
+    const staffList = document.getElementById('staff-list');
+    const playerTab = document.getElementById('tab-players');
+    const staffTab = document.getElementById('tab-staff');
+
+    if (tab === 'players') {
+        playersList.classList.remove('hidden');
+        staffList.classList.add('hidden');
+        playerTab.classList.add('border-b-2', 'border-accent-gold');
+        playerTab.classList.remove('text-gray-400');
+        staffTab.classList.add('text-gray-400');
+        staffTab.classList.remove('border-b-2', 'border-accent-gold');
+    } else {
+        staffList.classList.remove('hidden');
+        playersList.classList.add('hidden');
+        staffTab.classList.add('border-b-2', 'border-accent-gold');
+        staffTab.classList.remove('text-gray-400');
+        playerTab.classList.add('text-gray-400');
+        playerTab.classList.remove('border-b-2', 'border-accent-gold');
+    }
 }
 </script>
 @endsection

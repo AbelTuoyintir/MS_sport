@@ -17,6 +17,16 @@ class Player extends Model
         'assists',
         'rating',
         'status',
+        'appearances',
+        'minutes_played',
+        'yellow_cards',
+        'red_cards',
+        'clean_sheets',
+        'saves',
+        'penalties_scored',
+        'penalties_missed',
+        'motm_awards',
+        'photo_path',
     ];
 
     public function team()
