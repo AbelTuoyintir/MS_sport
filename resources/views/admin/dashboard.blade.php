@@ -228,141 +228,42 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Row 1 - E. Haaland -->
+                                    @forelse($top_scorers as $player)
                                     <tr class="table-row border-b border-white/5 cursor-pointer">
                                         <td class="px-5 md:px-6 py-3">
                                             <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f0c040] to-[#c8930a] flex items-center justify-center text-black font-bold text-sm">EH</div>
+                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f0c040] to-[#c8930a] flex items-center justify-center text-black font-bold text-xs">
+                                                    {{ strtoupper(substr($player->name, 0, 2)) }}
+                                                </div>
                                                 <div>
-                                                    <span class="font-semibold text-white text-sm">E. Haaland</span>
-                                                    <span class="block text-xs text-gray-500">Forward</span>
+                                                    <span class="font-semibold text-white text-sm">{{ $player->name }}</span>
+                                                    <span class="block text-xs text-gray-500">{{ $player->position }}</span>
                                                 </div>
                                             </div>
                                         </td>
                                         <td class="px-5 md:px-6 py-3">
                                             <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full bg-[#1a3cff] flex items-center justify-center text-white text-[10px] font-bold">MC</div>
-                                                <span class="text-gray-300 text-sm">Man City</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">24</span>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">24</span>
-                                                <span class="text-xs text-gray-500">⚽</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Row 2 - O. Watkins -->
-                                    <tr class="table-row border-b border-white/5 cursor-pointer">
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#6c1d45] to-[#8b2d5a] flex items-center justify-center text-white font-bold text-sm">OW</div>
-                                                <div>
-                                                    <span class="font-semibold text-white text-sm">O. Watkins</span>
-                                                    <span class="block text-xs text-gray-500">Forward</span>
+                                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style="background-color: {{ $player->team->primary_color ?? '#ccc' }}">
+                                                    {{ strtoupper(substr($player->team->team_name ?? 'NA', 0, 2)) }}
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full bg-[#6c1d45] flex items-center justify-center text-white text-[10px] font-bold">AV</div>
-                                                <span class="text-gray-300 text-sm">Aston Villa</span>
+                                                <span class="text-gray-300 text-sm">{{ $player->team->team_name ?? 'N/A' }}</span>
                                             </div>
                                         </td>
                                         <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">28</span>
+                                            <span class="text-white font-medium">-</span>
                                         </td>
                                         <td class="px-5 md:px-6 py-3 text-center">
                                             <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">18</span>
+                                                <span class="text-[#f0c040] font-bold text-lg">{{ $player->goals }}</span>
                                                 <span class="text-xs text-gray-500">⚽</span>
                                             </div>
                                         </td>
                                     </tr>
-                                    <!-- Row 3 - A. Lacazette -->
-                                    <tr class="table-row border-b border-white/5 cursor-pointer">
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#ef0107] to-[#ff2a2a] flex items-center justify-center text-white font-bold text-sm">AL</div>
-                                                <div>
-                                                    <span class="font-semibold text-white text-sm">A. Lacazette</span>
-                                                    <span class="block text-xs text-gray-500">Forward</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full bg-[#ef0107] flex items-center justify-center text-white text-[10px] font-bold">AR</div>
-                                                <span class="text-gray-300 text-sm">Arsenal</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">26</span>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">15</span>
-                                                <span class="text-xs text-gray-500">⚽</span>
-                                            </div>
-                                        </td>
+                                    @empty
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-4 text-center text-gray-500 text-sm">No scorers recorded yet.</td>
                                     </tr>
-                                    <!-- Row 4 - M. Salah -->
-                                    <tr class="table-row border-b border-white/5 cursor-pointer">
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#d00027] to-[#ff2a2a] flex items-center justify-center text-white font-bold text-sm">MS</div>
-                                                <div>
-                                                    <span class="font-semibold text-white text-sm">M. Salah</span>
-                                                    <span class="block text-xs text-gray-500">Forward</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full bg-[#d00027] flex items-center justify-center text-white text-[10px] font-bold">LP</div>
-                                                <span class="text-gray-300 text-sm">Liverpool</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">25</span>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">14</span>
-                                                <span class="text-xs text-gray-500">⚽</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <!-- Row 5 - J. Wilson -->
-                                    <tr class="table-row cursor-pointer">
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#241f20] to-[#3a3235] flex items-center justify-center text-white font-bold text-sm">JW</div>
-                                                <div>
-                                                    <span class="font-semibold text-white text-sm">J. Wilson</span>
-                                                    <span class="block text-xs text-gray-500">Forward</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full bg-[#241f20] flex items-center justify-center text-white text-[10px] font-bold">NC</div>
-                                                <span class="text-gray-300 text-sm">Newcastle</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">22</span>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">13</span>
-                                                <span class="text-xs text-gray-500">⚽</span>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
@@ -450,27 +351,17 @@
                             <span class="text-[10px] text-gray-500">Last 7 days</span>
                         </div>
                         <div class="space-y-3">
+                            @forelse($recent_activities as $activity)
                             <div class="flex items-start gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full bg-[#22c55e] mt-1.5"></div>
+                                <div class="w-1.5 h-1.5 rounded-full mt-1.5" style="background-color: {{ $activity->color }}"></div>
                                 <div>
-                                    <p class="text-xs text-gray-300">New player registered: <span class="text-white font-medium">Marcus Rashford</span></p>
-                                    <p class="text-[10px] text-gray-600">2 hours ago</p>
+                                    <p class="text-xs text-gray-300">{!! $activity->message !!}</p>
+                                    <p class="text-[10px] text-gray-600">{{ $activity->time }}</p>
                                 </div>
                             </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full bg-[#f0c040] mt-1.5"></div>
-                                <div>
-                                    <p class="text-xs text-gray-300">Team registration: <span class="text-white font-medium">AFC Richmond</span></p>
-                                    <p class="text-[10px] text-gray-600">Yesterday</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full bg-[#00e5ff] mt-1.5"></div>
-                                <div>
-                                    <p class="text-xs text-gray-300">Match result: Man City 3 - 1 Arsenal</p>
-                                    <p class="text-[10px] text-gray-600">2 days ago</p>
-                                </div>
-                            </div>
+                            @empty
+                            <p class="text-xs text-gray-500">No recent activity.</p>
+                            @endforelse
                         </div>
                     </div>
                 </div>

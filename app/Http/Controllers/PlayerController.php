@@ -47,4 +47,10 @@ class PlayerController extends Controller
 
         return back()->with('success', 'Player removed successfully.');
     }
+
+    public function showPublic($id)
+    {
+        $player = Player::with('team')->findOrFail($id);
+        return view('players.show', compact('player'));
+    }
 }

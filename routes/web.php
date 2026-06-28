@@ -10,6 +10,8 @@ use App\Http\Controllers\VoteController;
 use App\Http\Controllers\PredictionController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\GameController;
+use App\Http\Controllers\Admin\ArticleController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -22,8 +24,12 @@ Route::post('/comments', [CommentController::class, 'store'])->name('comments.st
 Route::post('/vote', [VoteController::class, 'store'])->name('vote.store');
 Route::post('/predictions', [PredictionController::class, 'store'])->name('predictions.store');
 
-// Registration routes
+// Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.show');
+Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
+
+// Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
 Route::get('/register', [TeamRegistrationController::class, 'showForm'])->name('team.register.form');
 Route::post('/api/team-info', [TeamRegistrationController::class, 'storeTeamInfo'])->name('api.team.info');
@@ -47,6 +53,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/payments', [PaymentController::class, 'listPayments'])->name('admin.payments');
     Route::post('/payment/{paymentId}/verify', [PaymentController::class, 'manualVerify'])->name('admin.payment.verify');
     Route::post('/payment/{paymentId}/refund', [PaymentController::class, 'refundPayment'])->name('admin.payment.refund');
+
+    // Game Management
+    Route::resource('games', GameController::class)->names('admin.games');
+
+    // News Management
+    Route::resource('articles', ArticleController::class)->names('admin.articles');
 });
 
 // Manager routes (protected)

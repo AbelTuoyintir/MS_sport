@@ -23,8 +23,9 @@ class HomeController extends Controller
         $recent_games = Game::with(['homeTeam', 'awayTeam'])->orderBy('kickoff', 'desc')->take(10)->get();
         $news = Article::with('comments')->where('is_published', true)->orderBy('created_at', 'desc')->take(5)->get();
         $top_scorers = Player::with('team')->where('goals', '>', 0)->orderBy('goals', 'desc')->take(5)->get();
+        $top_assists = Player::with('team')->where('assists', '>', 0)->orderBy('assists', 'desc')->take(5)->get();
         $all_teams = \App\Models\Team::all();
 
-        return view('home', compact('standings', 'recent_games', 'news', 'top_scorers', 'all_teams'));
+        return view('home', compact('standings', 'recent_games', 'news', 'top_scorers', 'top_assists', 'all_teams'));
     }
 }

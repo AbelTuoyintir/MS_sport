@@ -20,9 +20,45 @@ class AdminController extends Controller
             'total_goals' => Player::sum('goals'),
         ];
 
-        $recent_teams = Team::orderBy('created_at', 'desc')->take(5)->get();
-        $recent_games = Game::with(['homeTeam', 'awayTeam'])->orderBy('kickoff', 'desc')->take(5)->get();
+        $top_scorers = Player::with('team')->orderBy('goals', 'desc')->take(5)->get();
+        $recent_activities = collect(); // We can implement a more complex activity logger later if needed
 
-        return view('admin.dashboard', compact('stats', 'recent_teams', 'recent_games'));
+        // For now, let's populate activities from recent events
+        $recent_teams = Team::orderBy('created_at', 'desc')->take(3)->get();
+        foreach($recent_teams as $team) {
+            $recent_activities->push((object)[
+                'type' => 'team',
+                'message' => "Team registration: " . $team->team_name,
+                'timestamp' => $team->created_at,
+                'time' => $team->created_at->diffForHumans(),
+                'color' => '#f0c040'
+            ]);
+        }
+
+        $recent_players = Player::orderBy('created_at', 'desc')->take(3)->get();
+        foreach($recent_players as $player) {
+            $recent_activities->push((object)[
+                'type' => 'player',
+                'message' => "New player registered: " . $player->name,
+                'timestamp' => $player->created_at,
+                'time' => $player->created_at->diffForHumans(),
+                'color' => '#22c55e'
+            ]);
+        }
+
+        $recent_games = Game::with(['homeTeam', 'awayTeam'])->where('status', 'finished')->orderBy('updated_at', 'desc')->take(3)->get();
+        foreach($recent_games as $game) {
+            $recent_activities->push((object)[
+                'type' => 'match',
+                'message' => "Match result: {$game->homeTeam->team_name} {$game->home_score} - {$game->away_score} {$game->awayTeam->team_name}",
+                'timestamp' => $game->updated_at,
+                'time' => $game->updated_at->diffForHumans(),
+                'color' => '#00e5ff'
+            ]);
+        }
+
+        $recent_activities = $recent_activities->sortByDesc('timestamp')->take(5);
+
+        return view('admin.dashboard', compact('stats', 'top_scorers', 'recent_activities'));
     }
 }

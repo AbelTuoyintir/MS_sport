@@ -256,7 +256,7 @@
       <div class="w-1.5 h-1.5 rounded-full bg-custom-red animate-pulse-live"></div>
       2 Live
     </div>
-    <button class="hidden sm:block font-heading text-[11px] font-bold tracking-[0.5px] px-4 py-1.5 rounded-md transition-all duration-150 bg-transparent text-muted border border-border-dark2 hover:text-text-light hover:border-text-light uppercase">Sign In</button>
+    <a href="{{ route('login') }}" class="hidden sm:block font-heading text-[11px] font-bold tracking-[0.5px] px-4 py-1.5 rounded-md transition-all duration-150 bg-transparent text-muted border border-border-dark2 hover:text-text-light hover:border-text-light uppercase text-center no-underline">Sign In</a>
     <a href="{{ route('team.register.form') }}" class="hidden sm:block font-heading text-[11px] font-bold tracking-[0.5px] px-4 py-1.5 rounded-md transition-all duration-150 bg-gold text-black hover:bg-gold3 uppercase">Register Team</a>
     
     <!-- Mobile Menu Button -->
@@ -588,7 +588,7 @@ const STANDINGS = @json($standings);
 const ALL_MATCHES = @json($recent_games);
 const NEWS_DATA = @json($news);
 const SCORERS = @json($top_scorers);
-const ASSISTS = []; // Not yet implemented in backend
+const ASSISTS = @json($top_assists);
 const CLUBS_DATA = @json($all_teams);
 
 // Legacy fallback data (to keep the structure working if DB is empty)
@@ -664,20 +664,20 @@ function renderTable() {
   document.getElementById('public-table').innerHTML = head + '<tbody>' + body + '</tbody>';
 }
 
-function renderStats(data, id) {
-  const finalData = data.length > 0 ? data : SCORERS_LEGACY;
+function renderStats(data, id, type = 'goals') {
+  const finalData = data.length > 0 ? data : (type === 'goals' ? SCORERS_LEGACY : []);
   document.getElementById(id).innerHTML = finalData.map((s, i) => {
     const name = s.name || s.nm;
     const club = s.team ? s.team.team_name : (s.club || 'N/A');
-    const goals = s.goals !== undefined ? s.goals : s.g;
-    const progress = s.pct || (goals * 4);
+    const val = s[type] !== undefined ? s[type] : (type === 'goals' ? s.g : 0);
+    const progress = s.pct || (val * 4);
     return `
     <div class="px-3 sm:px-4 py-2 sm:py-2.5 border-b border-border-dark/70 flex items-center gap-2 hover:bg-white/5 transition-colors duration-150">
       <div class="font-display text-base sm:text-lg ${i===0 ? 'text-gold' : i===1 ? 'text-muted2' : i===2 ? 'text-amber-700' : 'text-muted'} w-4 sm:w-5 text-center">${i + 1}</div>
       <div class="w-6 h-6 sm:w-[30px] sm:h-[30px] rounded-full flex items-center justify-center text-xs sm:text-sm font-extrabold flex-shrink-0 bg-accent/10 text-accent">${s.nationality || s.nat || '🏳️'}</div>
       <div class="flex-1"><div class="text-[10px] sm:text-xs font-semibold text-text-light">${name}</div><div class="text-[8px] sm:text-[9px] text-muted">${club}</div></div>
       <div class="w-10 sm:w-14 h-0.5 bg-bg-dark4 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-accent to-accent2 rounded-full transition-all duration-700" style="width:${progress}%"></div></div>
-      <div class="font-display text-base sm:text-xl text-accent min-w-[24px] sm:min-w-[28px] text-right">${goals}</div>
+      <div class="font-display text-base sm:text-xl text-accent min-w-[24px] sm:min-w-[28px] text-right">${val}</div>
     </div>`}).join('');
 }
 
@@ -914,8 +914,8 @@ setTimeout(() => {
 
 // Init all
 renderTable();
-renderStats(SCORERS, 'public-scorers');
-renderStats(ASSISTS, 'public-assists');
+renderStats(SCORERS, 'public-scorers', 'goals');
+renderStats(ASSISTS, 'public-assists', 'assists');
 renderMatches('all');
 renderClubs();
 renderNews();
