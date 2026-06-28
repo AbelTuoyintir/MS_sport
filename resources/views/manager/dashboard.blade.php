@@ -59,11 +59,10 @@
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-400">Total Goals</span>
-                    <span class="font-bold text-accent-gold">{{ auth()->user()->team->players->sum('goals') ?? 0 }}</span>
-                </div>
+                    <span class="font-bold">{{ number_format(optional(auth()->user()->team)->players?->avg('rating') ?? 0, 1) }}</span>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-400">Avg Rating</span>
-                    <span class="font-bold">{{ number_format(auth()->user()->team->players->avg('rating') ?? 0, 1) }}</span>
+                    <span class="font-bold">{{ number_format(optional(auth()->user()->team)->players?->avg('rating') ?? 0, 1) }}</span>
                 </div>
             </div>
         </div>
