@@ -56,9 +56,42 @@ class GameController extends Controller
             'live_minute' => 'nullable|string|max:255',
         ]);
 
+        $oldStatus = $game->status;
         $game->update($validated);
 
+        // If game just finished, we could trigger stats updates here if not using dynamic service
+        if ($oldStatus !== 'finished' && $game->status === 'finished') {
+            // Log activity or update player appearance counts
+        }
+
         return redirect()->route('admin.games.index')->with('success', 'Game updated successfully.');
+    }
+
+    public function events(Game $game)
+    {
+        $game->load(['homeTeam.players', 'awayTeam.players', 'events.player']);
+        return view('admin.games.events', compact('game'));
+    }
+
+    public function storeEvent(Request $request, Game $game)
+    {
+        $validated = $request->validate([
+            'player_id' => 'required|exists:players,id',
+            'team_id' => 'required|exists:teams,id',
+            'type' => 'required|in:goal,assist,yellow_card,red_card,own_goal',
+            'minute' => 'required|string',
+        ]);
+
+        $game->events()->create($validated);
+
+        // Update player stats
+        $player = \App\Models\Player::find($validated['player_id']);
+        if ($validated['type'] === 'goal') $player->increment('goals');
+        if ($validated['type'] === 'assist') $player->increment('assists');
+        if ($validated['type'] === 'yellow_card') $player->increment('yellow_cards');
+        if ($validated['type'] === 'red_card') $player->increment('red_cards');
+
+        return redirect()->back()->with('success', 'Match event recorded.');
     }
 
     public function destroy(Game $game)

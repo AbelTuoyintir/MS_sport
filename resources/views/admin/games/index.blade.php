@@ -44,6 +44,7 @@
                 </td>
                 <td class="px-6 py-4">
                     <div class="flex gap-2">
+                        <a href="{{ route('admin.games.events', $game->id) }}" class="text-blue-400 hover:underline text-sm font-bold">Events</a>
                         <a href="{{ route('admin.games.edit', $game->id) }}" class="text-accent-gold hover:underline text-sm">Edit</a>
                         <form action="{{ route('admin.games.destroy', $game->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                             @csrf
