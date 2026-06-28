@@ -5,6 +5,7 @@ use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\StaffController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\VoteController;
 use App\Http\Controllers\PredictionController;
@@ -12,6 +13,10 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\TransferController;
+use App\Http\Controllers\TeamActivityController;
+use App\Http\Controllers\TeamOperationsController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -33,6 +38,7 @@ Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('play
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
 Route::get('/register', [TeamRegistrationController::class, 'showForm'])->name('team.register.form');
 Route::post('/api/team-info', [TeamRegistrationController::class, 'storeTeamInfo'])->name('api.team.info');
+Route::post('/teams/{id}/update', [TeamController::class, 'update'])->name('teams.update');
 Route::post('/api/owners', [TeamRegistrationController::class, 'storeOwners'])->name('api.team.owners');
 
 // Payment routes
@@ -55,6 +61,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/payment/{paymentId}/refund', [PaymentController::class, 'refundPayment'])->name('admin.payment.refund');
 
     // Game Management
+    Route::get('/games/{game}/events', [GameController::class, 'events'])->name('admin.games.events');
+    Route::post('/games/{game}/events', [GameController::class, 'storeEvent'])->name('admin.games.events.store');
     Route::resource('games', GameController::class)->names('admin.games');
 
     // News Management
@@ -68,4 +76,32 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/players', [PlayerController::class, 'store'])->name('manager.players.store');
     Route::put('/players/{id}', [PlayerController::class, 'update'])->name('manager.players.update');
     Route::delete('/players/{id}', [PlayerController::class, 'destroy'])->name('manager.players.destroy');
+
+    // Staff Management
+    Route::post('/staff', [StaffController::class, 'store'])->name('manager.staff.store');
+    Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('manager.staff.destroy');
+
+    // Transfer Market
+    Route::get('/transfers', [TransferController::class, 'index'])->name('manager.transfers.index');
+    Route::post('/transfers/list', [TransferController::class, 'listPlayer'])->name('manager.transfers.list');
+    Route::post('/transfers/offer', [TransferController::class, 'makeOffer'])->name('manager.transfers.offer');
+    Route::post('/transfers/handle/{id}', [TransferController::class, 'handleOffer'])->name('manager.transfers.handle');
+
+    // Training & Injuries
+    Route::get('/training', [TeamActivityController::class, 'trainingIndex'])->name('manager.training.index');
+    Route::post('/training', [TeamActivityController::class, 'storeTraining'])->name('manager.training.store');
+    Route::get('/injuries', [TeamActivityController::class, 'injuryIndex'])->name('manager.injuries.index');
+    Route::post('/injuries', [TeamActivityController::class, 'storeInjury'])->name('manager.injuries.store');
+
+    // Operations
+    Route::get('/finance', [TeamOperationsController::class, 'financeIndex'])->name('manager.finance.index');
+    Route::post('/finance', [TeamOperationsController::class, 'storeFinance'])->name('manager.finance.store');
+    Route::get('/equipment', [TeamOperationsController::class, 'equipmentIndex'])->name('manager.equipment.index');
+    Route::post('/equipment', [TeamOperationsController::class, 'storeEquipment'])->name('manager.equipment.store');
+    Route::get('/scouting', [TeamOperationsController::class, 'scoutingIndex'])->name('manager.scouting.index');
+    Route::post('/scouting', [TeamOperationsController::class, 'storeScout'])->name('manager.scouting.store');
+
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('manager.reports.index');
+    Route::get('/reports/export/players', [ReportController::class, 'exportPlayers'])->name('manager.reports.export.players');
 });

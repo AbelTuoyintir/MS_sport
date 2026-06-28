@@ -35,6 +35,8 @@ class ManagerController extends Controller
             ->take(5)
             ->get();
 
-        return view('manager.dashboard', compact('upcoming_games', 'recent_results'));
+        $staff = $team->staff;
+
+        return view('manager.dashboard', compact('upcoming_games', 'recent_results', 'staff'));
     }
 }
