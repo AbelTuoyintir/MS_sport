@@ -28,4 +28,12 @@ class HomeController extends Controller
 
         return view('home', compact('standings', 'recent_games', 'news', 'top_scorers', 'top_assists', 'all_teams'));
     }
+
+    public function matchDetails($id)
+    {
+        $game = Game::with(['homeTeam.players', 'awayTeam.players', 'events.player', 'events.team', 'squads.player'])
+            ->findOrFail($id);
+
+        return view('matches.show', compact('game'));
+    }
 }

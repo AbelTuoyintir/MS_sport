@@ -17,6 +17,7 @@ use App\Http\Controllers\TransferController;
 use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -33,6 +34,8 @@ Route::post('/predictions', [PredictionController::class, 'store'])->name('predi
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.show');
 Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
+Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');

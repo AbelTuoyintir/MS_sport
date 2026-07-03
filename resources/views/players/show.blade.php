@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             <div class="glass-card p-6 text-center">
                 <div class="text-4xl font-black text-accent-gold mb-1">{{ $player->goals }}</div>
                 <div class="text-xs text-gray-500 uppercase font-bold">Goals</div>
@@ -41,25 +41,64 @@
                 <div class="text-xs text-gray-500 uppercase font-bold">Assists</div>
             </div>
             <div class="glass-card p-6 text-center">
-                <div class="text-4xl font-black text-accent-gold mb-1">{{ $player->rating }}</div>
-                <div class="text-xs text-gray-500 uppercase font-bold">Rating</div>
+                <div class="text-4xl font-black text-accent-gold mb-1">{{ $player->yellow_cards }}</div>
+                <div class="text-xs text-gray-500 uppercase font-bold">Yellows</div>
+            </div>
+            <div class="glass-card p-6 text-center">
+                <div class="text-4xl font-black text-red-500 mb-1">{{ $player->red_cards }}</div>
+                <div class="text-xs text-gray-500 uppercase font-bold">Reds</div>
             </div>
         </div>
 
-        <div class="mt-8 glass-card p-8">
-            <h2 class="font-display text-3xl mb-6">Player Details</h2>
-            <div class="grid grid-cols-2 gap-8">
-                <div>
-                    <div class="text-xs text-gray-500 uppercase font-bold mb-1">Nationality</div>
-                    <div class="text-xl font-bold">{{ $player->nationality ?? 'N/A' }}</div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <div class="glass-card p-8">
+                <h2 class="font-display text-3xl mb-6">Player Details</h2>
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase font-bold mb-1">Nationality</div>
+                        <div class="text-xl font-bold">{{ $player->nationality ?? 'N/A' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase font-bold mb-1">Age</div>
+                        <div class="text-xl font-bold">{{ $player->age ?? 'N/A' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase font-bold mb-1">Appearances</div>
+                        <div class="text-xl font-bold">{{ $player->appearances }}</div>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase font-bold mb-1">Status</div>
+                        <div class="text-xl font-bold text-green-400">{{ ucfirst($player->status) }}</div>
+                    </div>
                 </div>
-                <div>
-                    <div class="text-xs text-gray-500 uppercase font-bold mb-1">Age</div>
-                    <div class="text-xl font-bold">{{ $player->age ?? 'N/A' }}</div>
-                </div>
-                <div>
-                    <div class="text-xs text-gray-500 uppercase font-bold mb-1">Status</div>
-                    <div class="text-xl font-bold text-green-400">{{ ucfirst($player->status) }}</div>
+            </div>
+
+            <div class="glass-card p-8">
+                <h2 class="font-display text-3xl mb-6">Recent Involvement</h2>
+                <div class="space-y-4">
+                    @forelse($recent_events as $event)
+                        <div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xl">
+                                    @if($event->type === 'goal') ⚽
+                                    @elseif($event->type === 'yellow_card') 🟨
+                                    @elseif($event->type === 'red_card') 🟥
+                                    @elseif($event->type === 'assist') 👟
+                                    @endif
+                                </span>
+                                <div>
+                                    <div class="text-xs font-bold uppercase text-gray-400">{{ str_replace('_', ' ', $event->type) }}</div>
+                                    <div class="text-sm">vs {{ $event->game->home_team_id === $player->team_id ? $event->game->awayTeam->team_name : $event->game->homeTeam->team_name }}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs font-bold">{{ $event->minute }}'</div>
+                                <div class="text-[10px] text-gray-600">{{ $event->created_at->format('M d, Y') }}</div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center text-gray-500 py-8 italic">No recent match events.</div>
+                    @endforelse
                 </div>
             </div>
         </div>

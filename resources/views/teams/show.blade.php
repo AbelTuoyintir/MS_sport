@@ -17,15 +17,31 @@
     <div class="max-w-6xl mx-auto">
         <a href="{{ route('home') }}" class="text-accent-gold hover:underline mb-8 inline-block">← Back to Home</a>
 
-        <div class="glass-card p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
-            <div class="w-32 h-32 rounded-full flex items-center justify-center text-4xl font-black text-white" style="background-color: {{ $team->primary_color }}">
-                {{ strtoupper(substr($team->team_name, 0, 2)) }}
+        <div class="glass-card p-8 mb-8 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="w-32 h-32 rounded-full flex items-center justify-center text-4xl font-black text-white" style="background-color: {{ $team->primary_color }}">
+                    {{ strtoupper(substr($team->team_name, 0, 2)) }}
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="font-display text-6xl mb-2">{{ $team->team_name }}</h1>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-4">
+                        <span class="bg-white/10 px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wider">{{ $team->division }}</span>
+                        <span class="text-gray-400">Squad Size: {{ $team->players->count() }} / {{ $team->team_size }}</span>
+                    </div>
+                </div>
             </div>
-            <div class="text-center md:text-left">
-                <h1 class="font-display text-6xl mb-2">{{ $team->team_name }}</h1>
-                <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                    <span class="bg-white/10 px-3 py-1 rounded-full text-sm font-bold uppercase tracking-wider">{{ $team->division }}</span>
-                    <span class="text-gray-400">Squad Size: {{ $team->players->count() }} / {{ $team->team_size }}</span>
+            <div class="flex gap-4">
+                <div class="text-center px-4 border-r border-white/10">
+                    <div class="text-3xl font-display text-accent-gold">{{ $stats['total_goals'] }}</div>
+                    <div class="text-[10px] text-gray-500 uppercase font-bold">Goals</div>
+                </div>
+                <div class="text-center px-4 border-r border-white/10">
+                    <div class="text-3xl font-display text-accent-gold">{{ $stats['yellow_cards'] }}</div>
+                    <div class="text-[10px] text-gray-500 uppercase font-bold">Yellows</div>
+                </div>
+                <div class="text-center px-4">
+                    <div class="text-3xl font-display text-red-500">{{ $stats['red_cards'] }}</div>
+                    <div class="text-[10px] text-gray-500 uppercase font-bold">Reds</div>
                 </div>
             </div>
         </div>
@@ -52,23 +68,44 @@
                 </div>
             </div>
 
-            <div>
-                <h2 class="font-display text-4xl mb-4">Recent Form</h2>
-                <div class="space-y-4">
-                    @forelse($recent_games as $game)
-                        <div class="glass-card p-4">
-                            <div class="text-[10px] text-gray-500 font-bold uppercase mb-2">Matchweek {{ $game->matchweek }}</div>
-                            <div class="flex justify-between items-center">
-                                <div class="flex-1 text-right pr-2 {{ $game->home_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->homeTeam->team_name }}</div>
-                                <div class="bg-white/10 px-3 py-1 rounded font-black text-accent-gold">{{ $game->home_score }} - {{ $game->away_score }}</div>
-                                <div class="flex-1 text-left pl-2 {{ $game->away_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->awayTeam->team_name }}</div>
-                            </div>
-                            <div class="text-center text-[10px] text-gray-600 mt-2">{{ $game->kickoff->format('M d, Y') }}</div>
-                        </div>
-                    @empty
-                        <p class="text-gray-500">No matches recorded.</p>
-                    @endforelse
-                </div>
+            <div class="space-y-8">
+                <section>
+                    <h2 class="font-display text-4xl mb-4">Recent Results</h2>
+                    <div class="space-y-4">
+                        @forelse($recent_games as $game)
+                            <a href="{{ route('matches.show', $game->id) }}" class="block glass-card p-4 hover:bg-white/10 transition-colors">
+                                <div class="text-[10px] text-gray-500 font-bold uppercase mb-2">Matchweek {{ $game->matchweek }}</div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex-1 text-right pr-2 {{ $game->home_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->homeTeam->team_name }}</div>
+                                    <div class="bg-white/10 px-3 py-1 rounded font-black text-accent-gold">{{ $game->home_score }} - {{ $game->away_score }}</div>
+                                    <div class="flex-1 text-left pl-2 {{ $game->away_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->awayTeam->team_name }}</div>
+                                </div>
+                                <div class="text-center text-[10px] text-gray-600 mt-2">{{ $game->kickoff->format('M d, Y') }}</div>
+                            </a>
+                        @empty
+                            <p class="text-gray-500 italic">No matches recorded.</p>
+                        @endforelse
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="font-display text-4xl mb-4">Upcoming Fixtures</h2>
+                    <div class="space-y-4">
+                        @forelse($upcoming_games as $game)
+                            <a href="{{ route('matches.show', $game->id) }}" class="block glass-card p-4 hover:bg-white/10 transition-colors">
+                                <div class="text-[10px] text-gray-500 font-bold uppercase mb-2">Matchweek {{ $game->matchweek }}</div>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex-1 text-right pr-2 {{ $game->home_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->homeTeam->team_name }}</div>
+                                    <div class="bg-white/10 px-3 py-1 rounded font-black text-accent-gold">VS</div>
+                                    <div class="flex-1 text-left pl-2 {{ $game->away_team_id == $team->id ? 'font-bold' : 'text-gray-400' }}">{{ $game->awayTeam->team_name }}</div>
+                                </div>
+                                <div class="text-center text-[10px] text-gray-600 mt-2">{{ $game->kickoff->format('M d, Y · H:i') }}</div>
+                            </a>
+                        @empty
+                            <p class="text-gray-500 italic">No fixtures scheduled.</p>
+                        @endforelse
+                    </div>
+                </section>
             </div>
         </div>
     </div>
