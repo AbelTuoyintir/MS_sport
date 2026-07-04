@@ -33,6 +33,8 @@ Route::post('/predictions', [PredictionController::class, 'store'])->name('predi
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.show');
 Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
+Route::get('/matches/{id}', [\App\Http\Controllers\PublicGameController::class, 'show'])->name('matches.show');
+Route::get('/search', [\App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');

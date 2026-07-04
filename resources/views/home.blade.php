@@ -244,6 +244,7 @@
   
   <!-- Desktop Navigation -->
   <div class="hidden md:flex items-center gap-0 ml-9">
+      <a href="{{ route('search') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Search</a>
     <a href="#standings" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Standings</a>
     <a href="#matches" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Matches</a>
     <a href="#news" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">News</a>
@@ -700,7 +701,7 @@ function renderMatches(tab = 'all') {
     const isUpcoming = m.status === 'upcoming';
 
     return `
-    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden transition-all duration-200 hover:border-border-dark2">
+    <div class="bg-bg-dark3 border border-border-dark rounded-xl overflow-hidden transition-all duration-200 hover:border-border-dark2 cursor-pointer" onclick="window.location.href='/matches/${m.id}'">
       <div class="px-2.5 sm:px-3.5 py-1.5 sm:py-2 border-b border-border-dark flex flex-wrap items-center justify-between gap-1">
         <div class="text-[8px] sm:text-[9px] font-bold text-muted tracking-[0.5px]">MW ${m.matchweek || 'N/A'}</div>
         <div class="text-[7px] sm:text-[8px] font-extrabold tracking-[0.8px] px-1.5 sm:px-2 py-0.5 rounded uppercase ${m.status === 'live' ? 'bg-custom-red/15 text-custom-red animate-pulse-live' : 'bg-accent/10 text-accent'}">${m.status}</div>

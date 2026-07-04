@@ -3,7 +3,10 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex justify-between items-center">
-        <h2 class="text-2xl font-bold">Match Events: {{ $game->homeTeam->team_name }} vs {{ $game->awayTeam->team_name }}</h2>
+        <div>
+            <h2 class="text-2xl font-bold">Match Events: {{ $game->homeTeam->team_name }} vs {{ $game->awayTeam->team_name }}</h2>
+            <p class="text-accent-gold font-bold text-xl">{{ $game->home_score }} – {{ $game->away_score }} ({{ $game->status }})</p>
+        </div>
         <a href="{{ route('admin.games.index') }}" class="text-accent-gold hover:underline">← Back to Fixtures</a>
     </div>
 
