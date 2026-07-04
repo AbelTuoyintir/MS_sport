@@ -30,11 +30,29 @@ class TeamController extends Controller
                 $query->where('home_team_id', $id)
                       ->orWhere('away_team_id', $id);
             })
+            ->where('status', 'finished')
             ->orderBy('kickoff', 'desc')
-            ->take(10)
+            ->take(5)
             ->get();
 
-        return view('teams.show', compact('team', 'recent_games'));
+        $upcoming_games = \App\Models\Game::with(['homeTeam', 'awayTeam'])
+            ->where(function($query) use ($id) {
+                $query->where('home_team_id', $id)
+                      ->orWhere('away_team_id', $id);
+            })
+            ->where('status', 'upcoming')
+            ->orderBy('kickoff', 'asc')
+            ->take(5)
+            ->get();
+
+        $stats = [
+            'total_goals' => $team->players->sum('goals'),
+            'total_assists' => $team->players->sum('assists'),
+            'yellow_cards' => $team->players->sum('yellow_cards'),
+            'red_cards' => $team->players->sum('red_cards'),
+        ];
+
+        return view('teams.show', compact('team', 'recent_games', 'upcoming_games', 'stats'));
     }
 
     public function update(Request $request, $id)

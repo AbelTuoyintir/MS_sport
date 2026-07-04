@@ -8,22 +8,23 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function index(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('q');
-        $teams = [];
-        $players = [];
 
-        if ($query) {
-            $teams = Team::where('team_name', 'LIKE', "%{$query}%")
-                ->orWhere('city', 'LIKE', "%{$query}%")
-                ->get();
-
-            $players = Player::with('team')
-                ->where('name', 'LIKE', "%{$query}%")
-                ->get();
+        if (empty($query)) {
+            return redirect()->route('home');
         }
 
-        return view('search', compact('teams', 'players', 'query'));
+        $teams = Team::where('team_name', 'LIKE', "%{$query}%")
+            ->orWhere('city', 'LIKE', "%{$query}%")
+            ->get();
+
+        $players = Player::with('team')
+            ->where('name', 'LIKE', "%{$query}%")
+            ->orWhere('nationality', 'LIKE', "%{$query}%")
+            ->get();
+
+        return view('search.results', compact('teams', 'players', 'query'));
     }
 }

@@ -26,7 +26,25 @@ class StandingsService
                 'ga' => 0,
                 'gd' => 0,
                 'points' => 0,
+                'form' => [],
             ];
+
+            $teamGames = $games->filter(function($game) use ($team) {
+                return $game->home_team_id === $team->id || $game->away_team_id === $team->id;
+            })->sortByDesc('kickoff')->take(5);
+
+            foreach ($teamGames as $game) {
+                if ($game->home_team_id === $team->id) {
+                    if ($game->home_score > $game->away_score) $stats['form'][] = 'w';
+                    elseif ($game->home_score === $game->away_score) $stats['form'][] = 'd';
+                    else $stats['form'][] = 'l';
+                } else {
+                    if ($game->away_score > $game->home_score) $stats['form'][] = 'w';
+                    elseif ($game->home_score === $game->away_score) $stats['form'][] = 'd';
+                    else $stats['form'][] = 'l';
+                }
+            }
+            $stats['form'] = array_reverse($stats['form']);
 
             foreach ($games as $game) {
                 if ($game->home_team_id === $team->id) {

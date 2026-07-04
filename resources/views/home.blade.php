@@ -253,6 +253,16 @@
   </div>
   
   <div class="flex items-center gap-2">
+    <!-- Search Bar -->
+    <div class="hidden lg:flex items-center bg-bg-dark3 border border-border-dark rounded-md px-2 py-1 mr-4">
+      <form action="{{ route('search') }}" method="GET" class="flex items-center">
+        <input type="text" name="q" placeholder="Search teams or players..." class="bg-transparent text-[10px] text-text-light outline-none w-48 placeholder-muted">
+        <button type="submit">
+          <svg class="w-3.5 h-3.5 text-muted hover:text-gold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </button>
+      </form>
+    </div>
+
     <div class="hidden sm:flex items-center gap-1.5 bg-custom-red/20 border border-custom-red/30 rounded-full px-2.5 py-1 text-[9px] font-extrabold tracking-[1px] text-custom-red uppercase">
       <div class="w-1.5 h-1.5 rounded-full bg-custom-red animate-pulse-live"></div>
       2 Live
@@ -720,7 +730,7 @@ function renderMatches(tab = 'all') {
         </div>
 
         ${isUpcoming ? `
-          <div class="mt-4 pt-3 border-t border-border-dark">
+          <div class="mt-4 pt-3 border-t border-border-dark" onclick="event.stopPropagation()">
             <button onclick="togglePrediction(${m.id})" class="w-full text-[8px] text-accent font-bold uppercase py-1 border border-accent/20 rounded hover:bg-accent/5">Predict Score</button>
             <form id="pred-${m.id}" action="{{ route('predictions.store') }}" method="POST" class="hidden mt-3 space-y-2">
               @csrf

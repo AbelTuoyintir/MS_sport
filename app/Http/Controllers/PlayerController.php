@@ -51,6 +51,13 @@ class PlayerController extends Controller
     public function showPublic($id)
     {
         $player = Player::with('team')->findOrFail($id);
-        return view('players.show', compact('player'));
+
+        $recent_events = \App\Models\MatchEvent::with(['game.homeTeam', 'game.awayTeam'])
+            ->where('player_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('players.show', compact('player', 'recent_events'));
     }
 }
