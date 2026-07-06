@@ -25,6 +25,7 @@ class DummyDataSeeder extends Seeder
         DB::statement('DELETE FROM owners');
         DB::statement('DELETE FROM payments');
         DB::statement('DELETE FROM teams');
+        DB::statement('DELETE FROM articles');
 
         $teams = [
             ['Accra Lions', '#ff0000', '#ffffff'],
@@ -37,6 +38,16 @@ class DummyDataSeeder extends Seeder
             ['Sunyani Suns', '#ffd700', '#ff4500'],
             ['Bolga Bulls', '#8b4513', '#ffffff'],
             ['Wa Wizards', '#2f4f4f', '#ffffff'],
+            ['Techiman Terriers', '#4b0082', '#ffffff'],
+            ['Obuasi Orbits', '#ffd700', '#000000'],
+            ['Tarkwa Titans', '#c0c0c0', '#000000'],
+            ['Berekum Blues', '#0000ff', '#ffffff'],
+            ['Dormaa Dragons', '#006400', '#ffffff'],
+            ['Aba Warriors', '#ff4500', '#ffffff'],
+            ['Lagos Legends', '#ffffff', '#008000'],
+            ['Cairo Cobras', '#ff0000', '#000000'],
+            ['Casablanca Cats', '#ff0000', '#00ff00'],
+            ['Nairobi Nightmares', '#000000', '#ffffff'],
         ];
 
         $teamModels = [];
@@ -50,6 +61,9 @@ class DummyDataSeeder extends Seeder
                 'secondary_color' => $t[2],
                 'registration_status' => 'approved',
                 'password' => Hash::make('password'),
+                'home_stadium' => $t[0] . ' Arena',
+                'city' => 'City ' . ($index + 1),
+                'founded_year' => '2020',
             ]);
             $teamModels[] = $team;
 
@@ -62,47 +76,59 @@ class DummyDataSeeder extends Seeder
             ]);
 
             // Add players for each team
-            $positions = ['GK', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'FWD', 'FWD'];
-            foreach ($positions as $pos) {
+            $positions = ['GK', 'DEF', 'DEF', 'DEF', 'DEF', 'MID', 'MID', 'MID', 'MID', 'FWD', 'FWD'];
+            foreach ($positions as $pIndex => $pos) {
                 Player::create([
                     'team_id' => $team->id,
-                    'name' => 'Player ' . rand(1, 1000),
+                    'name' => $t[0] . ' Player ' . ($pIndex + 1),
                     'position' => $pos,
-                    'goals' => rand(0, 10),
+                    'goals' => rand(0, 15),
+                    'assists' => rand(0, 10),
+                    'yellow_cards' => rand(0, 5),
+                    'red_cards' => rand(0, 1),
+                    'appearances' => rand(5, 20),
                     'rating' => rand(70, 95),
                     'nationality' => '🇬🇭',
+                    'number' => rand(1, 99),
                 ]);
             }
         }
 
         // Create some finished games for standings
-        for ($i = 0; $i < 10; $i++) {
-            $h = $teamModels[rand(0, 4)];
-            $a = $teamModels[rand(5, 9)];
+        for ($i = 0; $i < 30; $i++) {
+            $hIndex = rand(0, 19);
+            $aIndex = rand(0, 19);
+            while($hIndex == $aIndex) $aIndex = rand(0, 19);
+
+            $h = $teamModels[$hIndex];
+            $a = $teamModels[$aIndex];
             Game::create([
                 'home_team_id' => $h->id,
                 'away_team_id' => $a->id,
                 'home_score' => rand(0, 4),
                 'away_score' => rand(0, 4),
-                'kickoff' => now()->subDays(rand(1, 10)),
-                'matchweek' => 1,
+                'kickoff' => now()->subDays(rand(1, 20)),
+                'matchweek' => rand(1, 5),
                 'status' => 'finished',
-                'venue' => $h->team_name . ' Ground',
+                'venue' => $h->home_stadium,
             ]);
         }
 
         // Create upcoming games for predictions
-        for ($i = 0; $i < 5; $i++) {
-            $h = $teamModels[rand(0, 9)];
-            $a = $teamModels[rand(0, 9)];
-            if ($h->id == $a->id) continue;
+        for ($i = 0; $i < 10; $i++) {
+            $hIndex = rand(0, 19);
+            $aIndex = rand(0, 19);
+            while($hIndex == $aIndex) $aIndex = rand(0, 19);
+
+            $h = $teamModels[$hIndex];
+            $a = $teamModels[$aIndex];
             Game::create([
                 'home_team_id' => $h->id,
                 'away_team_id' => $a->id,
-                'kickoff' => now()->addDays(rand(1, 5)),
-                'matchweek' => 2,
+                'kickoff' => now()->addDays(rand(1, 7)),
+                'matchweek' => 6,
                 'status' => 'upcoming',
-                'venue' => $h->team_name . ' Ground',
+                'venue' => $h->home_stadium,
             ]);
         }
 
@@ -110,6 +136,13 @@ class DummyDataSeeder extends Seeder
             'title' => 'League Season 2024/25 Officially Kicks Off!',
             'content' => 'The highly anticipated football season has started with some thrilling matches across the country.',
             'tag' => 'Announcement',
+            'is_published' => true,
+        ]);
+
+        Article::create([
+            'title' => 'Transfer Window Summary',
+            'content' => 'Many teams have strengthened their squads during the off-season. Here is a look at the biggest moves.',
+            'tag' => 'Transfer',
             'is_published' => true,
         ]);
     }

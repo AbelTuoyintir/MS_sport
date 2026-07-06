@@ -141,8 +141,34 @@
 
                 <section>
                     <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Head to Head</h3>
-                    <div class="glass-card p-6 text-center text-gray-500 italic">
-                        Previous meetings data coming soon.
+                    <div class="glass-card p-6">
+                        <div class="grid grid-cols-3 gap-4 text-center mb-8">
+                            <div>
+                                <div class="text-3xl font-black accent-gold">{{ $h2h_stats['home_wins'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">{{ $game->homeTeam->team_name }} Wins</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black text-gray-400">{{ $h2h_stats['draws'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">Draws</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-black accent-gold">{{ $h2h_stats['away_wins'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">{{ $game->awayTeam->team_name }} Wins</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            @foreach($h2h_matches as $match)
+                                <div class="flex items-center justify-between text-sm py-2 border-b border-white/5 last:border-0">
+                                    <div class="text-gray-500 w-24">{{ $match->kickoff->format('M d, Y') }}</div>
+                                    <div class="flex-1 flex items-center justify-center gap-4">
+                                        <span class="font-bold {{ $match->home_team_id === $game->home_team_id ? 'text-white' : 'text-gray-400' }}">{{ $match->homeTeam->team_name }}</span>
+                                        <span class="font-display text-xl">{{ $match->home_score }} - {{ $match->away_score }}</span>
+                                        <span class="font-bold {{ $match->away_team_id === $game->away_team_id ? 'text-white' : 'text-gray-400' }}">{{ $match->awayTeam->team_name }}</span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
                 </section>
             </div>

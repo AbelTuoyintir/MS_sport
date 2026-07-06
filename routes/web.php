@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\StaffController;
@@ -35,6 +37,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.show');
 Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
 Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
+Route::get('/stats', [StatsController::class, 'index'])->name('stats.index');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Registration routes
@@ -103,6 +106,10 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/equipment', [TeamOperationsController::class, 'storeEquipment'])->name('manager.equipment.store');
     Route::get('/scouting', [TeamOperationsController::class, 'scoutingIndex'])->name('manager.scouting.index');
     Route::post('/scouting', [TeamOperationsController::class, 'storeScout'])->name('manager.scouting.store');
+
+    // Tactics
+    Route::get('/tactics', [ManagerController::class, 'tactics'])->name('manager.tactics');
+    Route::post('/tactics', [ManagerController::class, 'updateTactics'])->name('manager.tactics.update');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('manager.reports.index');
