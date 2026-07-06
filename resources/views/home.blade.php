@@ -244,6 +244,7 @@
   
   <!-- Desktop Navigation -->
   <div class="hidden md:flex items-center gap-0 ml-9">
+      <a href="{{ route('search') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Search</a>
     <a href="#standings" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Standings</a>
     <a href="#matches" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Matches</a>
     <a href="#news" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">News</a>

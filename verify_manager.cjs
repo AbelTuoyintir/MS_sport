@@ -9,7 +9,7 @@ const { chromium } = require('playwright');
 
   // 1. Login
   await page.goto('http://127.0.0.1:8000/login');
-  await page.fill('input[name="email"]', 'manager@test.com');
+  await page.fill('input[name="email"]', 'accralions@league.com');
   await page.fill('input[name="password"]', 'password');
   await page.click('button[type="submit"]');
 

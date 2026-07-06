@@ -62,6 +62,12 @@ class GameController extends Controller
         // If game just finished, we could trigger stats updates here if not using dynamic service
         if ($oldStatus !== 'finished' && $game->status === 'finished') {
             // Log activity or update player appearance counts
+            foreach ($game->homeTeam->players as $player) {
+                $player->increment('appearances');
+            }
+            foreach ($game->awayTeam->players as $player) {
+                $player->increment('appearances');
+            }
         }
 
         return redirect()->route('admin.games.index')->with('success', 'Game updated successfully.');
@@ -86,10 +92,24 @@ class GameController extends Controller
 
         // Update player stats
         $player = \App\Models\Player::find($validated['player_id']);
-        if ($validated['type'] === 'goal') $player->increment('goals');
+        if ($validated['type'] === 'goal') {
+            $player->increment('goals');
+            if ($validated['team_id'] == $game->home_team_id) {
+                $game->increment('home_score');
+            } else {
+                $game->increment('away_score');
+            }
+        }
         if ($validated['type'] === 'assist') $player->increment('assists');
         if ($validated['type'] === 'yellow_card') $player->increment('yellow_cards');
         if ($validated['type'] === 'red_card') $player->increment('red_cards');
+        if ($validated['type'] === 'own_goal') {
+            if ($validated['team_id'] == $game->home_team_id) {
+                $game->increment('away_score');
+            } else {
+                $game->increment('home_score');
+            }
+        }
 
         return redirect()->back()->with('success', 'Match event recorded.');
     }
