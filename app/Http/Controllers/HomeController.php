@@ -34,6 +34,36 @@ class HomeController extends Controller
         $game = Game::with(['homeTeam.players', 'awayTeam.players', 'events.player', 'events.team', 'squads.player'])
             ->findOrFail($id);
 
-        return view('matches.show', compact('game'));
+        $h2h_matches = Game::where(function($q) use ($game) {
+                $q->where('home_team_id', $game->home_team_id)
+                  ->where('away_team_id', $game->away_team_id);
+            })->orWhere(function($q) use ($game) {
+                $q->where('home_team_id', $game->away_team_id)
+                  ->where('away_team_id', $game->home_team_id);
+            })
+            ->where('status', 'finished')
+            ->orderBy('kickoff', 'desc')
+            ->get();
+
+        $h2h_stats = [
+            'home_wins' => 0,
+            'away_wins' => 0,
+            'draws' => 0,
+            'total' => $h2h_matches->count()
+        ];
+
+        foreach($h2h_matches as $m) {
+            if ($m->home_score === $m->away_score) {
+                $h2h_stats['draws']++;
+            } elseif ($m->home_team_id === $game->home_team_id) {
+                if ($m->home_score > $m->away_score) $h2h_stats['home_wins']++;
+                else $h2h_stats['away_wins']++;
+            } else {
+                if ($m->home_score > $m->away_score) $h2h_stats['away_wins']++;
+                else $h2h_stats['home_wins']++;
+            }
+        }
+
+        return view('matches.show', compact('game', 'h2h_matches', 'h2h_stats'));
     }
 }
