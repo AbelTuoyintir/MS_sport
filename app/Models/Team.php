@@ -22,6 +22,12 @@ class Team extends Model
         'description',
         'city',
         'founded_year',
+        'formation',
+        'starting_xi',
+    ];
+
+    protected $casts = [
+        'starting_xi' => 'array',
     ];
 
     public function owners()
