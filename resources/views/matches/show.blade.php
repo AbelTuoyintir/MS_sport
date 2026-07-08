@@ -141,8 +141,37 @@
 
                 <section>
                     <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Head to Head</h3>
-                    <div class="glass-card p-6 text-center text-gray-500 italic">
-                        Previous meetings data coming soon.
+                    <div class="glass-card p-6 space-y-6">
+                        <div class="flex justify-between items-center text-center">
+                            <div class="flex-1">
+                                <div class="text-3xl font-display accent-gold">{{ $h2h_stats['home_wins'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">Wins</div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-3xl font-display text-gray-400">{{ $h2h_stats['draws'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">Draws</div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-3xl font-display accent-gold">{{ $h2h_stats['away_wins'] }}</div>
+                                <div class="text-[10px] text-gray-500 uppercase font-bold">Wins</div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest border-b border-white/5 pb-1">Previous Meetings</h4>
+                            @forelse($h2h as $match)
+                                <div class="flex justify-between items-center text-sm bg-white/5 p-2 rounded">
+                                    <span class="text-gray-400 text-xs">{{ $match->kickoff->format('M Y') }}</span>
+                                    <div class="flex-1 flex justify-center items-center gap-2">
+                                        <span class="{{ $match->home_team_id == $game->home_team_id ? 'font-bold' : '' }}">{{ $match->homeTeam->team_name }}</span>
+                                        <span class="bg-white/10 px-2 rounded font-black">{{ $match->home_score }} - {{ $match->away_score }}</span>
+                                        <span class="{{ $match->away_team_id == $game->home_team_id ? 'font-bold' : '' }}">{{ $match->awayTeam->team_name }}</span>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-center text-gray-600 italic text-xs">No previous meetings recorded.</p>
+                            @endforelse
+                        </div>
                     </div>
                 </section>
             </div>

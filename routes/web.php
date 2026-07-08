@@ -36,6 +36,7 @@ Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.sh
 Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
 Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/stats', [\App\Http\Controllers\StatsController::class, 'index'])->name('stats');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
@@ -107,4 +108,8 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('manager.reports.index');
     Route::get('/reports/export/players', [ReportController::class, 'exportPlayers'])->name('manager.reports.export.players');
+
+    // Tactics
+    Route::get('/tactics', [\App\Http\Controllers\TacticsController::class, 'index'])->name('manager.tactics.index');
+    Route::post('/tactics', [\App\Http\Controllers\TacticsController::class, 'store'])->name('manager.tactics.store');
 });
