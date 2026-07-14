@@ -503,6 +503,98 @@
   </div>
 </div>
 
+<!-- TEAM OF THE WEEK SECTION -->
+<section class="py-12 sm:py-[70px] px-4 sm:px-6 md:px-10 bg-bg-dark border-t border-border-dark" id="totw">
+  <div class="reveal flex flex-wrap items-end justify-between gap-3 mb-8">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-[14px] sm:w-[18px] h-[2px] bg-accent"></div>
+        <div class="font-heading text-[9px] sm:text-[10px] font-bold tracking-[2px] sm:tracking-[3px] text-accent uppercase">Matchweek 32</div>
+      </div>
+      <div class="font-display text-[clamp(28px,6vw,52px)] text-text-light leading-none">Team of the Week</div>
+    </div>
+  </div>
+
+  <div class="reveal max-w-4xl mx-auto glass-card p-8 relative bg-green-900/10 rounded-2xl border border-white/10 overflow-hidden min-h-[500px] flex flex-col justify-between">
+      <!-- Pitch markings -->
+      <div class="absolute inset-0 z-0 opacity-10 pointer-events-none">
+          <div class="absolute inset-4 border-2 border-white rounded-lg"></div>
+          <div class="absolute inset-y-4 left-1/2 w-0.5 bg-white"></div>
+          <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-white rounded-full"></div>
+          <div class="absolute top-4 left-1/2 -translate-x-1/2 w-48 h-20 border-2 border-t-0 border-white"></div>
+          <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-48 h-20 border-2 border-b-0 border-white"></div>
+      </div>
+
+      <div class="relative z-10 flex-1 flex flex-col justify-around py-4">
+          <!-- Forwards -->
+          <div class="flex justify-center gap-16 sm:gap-32">
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-gold/20">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">E. Haaland</div>
+                  <div class="text-[8px] text-gold font-bold uppercase">MC</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-gold/20">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">O. Watkins</div>
+                  <div class="text-[8px] text-gold font-bold uppercase">AVL</div>
+              </div>
+          </div>
+
+          <!-- Midfielders -->
+          <div class="flex justify-around px-4">
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">K. De Bruyne</div>
+                  <div class="text-[8px] text-accent font-bold uppercase">MC</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">M. Ødegaard</div>
+                  <div class="text-[8px] text-accent font-bold uppercase">ARS</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-accent/20">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">P. Foden</div>
+                  <div class="text-[8px] text-accent font-bold uppercase">MC</div>
+              </div>
+          </div>
+
+          <!-- Defenders -->
+          <div class="flex justify-around px-2">
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">V. van Dijk</div>
+                  <div class="text-[8px] text-gray-400 font-bold uppercase">LIV</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">W. Saliba</div>
+                  <div class="text-[8px] text-gray-400 font-bold uppercase">ARS</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">K. Walker</div>
+                  <div class="text-[8px] text-gray-400 font-bold uppercase">MC</div>
+              </div>
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🏃</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">B. White</div>
+                  <div class="text-[8px] text-gray-400 font-bold uppercase">ARS</div>
+              </div>
+          </div>
+
+          <!-- Goalkeeper -->
+          <div class="flex justify-center">
+              <div class="flex flex-col items-center gap-1 group">
+                  <div class="w-12 h-12 rounded-full bg-custom-green/20 border border-custom-green/40 flex items-center justify-center text-xl group-hover:scale-110 transition-transform shadow-lg shadow-custom-green/20">🧤</div>
+                  <div class="text-[10px] font-bold text-white bg-black/60 px-2 py-0.5 rounded">A. Raya</div>
+                  <div class="text-[8px] text-custom-green font-bold uppercase">ARS</div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
 <!-- NEWS SECTION -->
 <section class="py-12 sm:py-[70px] px-4 sm:px-6 md:px-10 bg-bg-dark2 border-t border-border-dark" id="news">
   <div class="reveal flex flex-wrap items-end justify-between gap-3 mb-6">
