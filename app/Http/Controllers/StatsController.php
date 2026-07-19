@@ -21,6 +21,18 @@ class StatsController extends Controller
             ->take(20)
             ->get();
 
+        $topRated = Player::with('team')
+            ->where('rating', '>', 0)
+            ->orderBy('rating', 'desc')
+            ->take(10)
+            ->get();
+
+        $mostMOTM = Player::with('team')
+            ->where('motm_awards', '>', 0)
+            ->orderBy('motm_awards', 'desc')
+            ->take(10)
+            ->get();
+
         $mostYellowCards = Player::with('team')
             ->where('yellow_cards', '>', 0)
             ->orderBy('yellow_cards', 'desc')
@@ -39,6 +51,21 @@ class StatsController extends Controller
             ->take(10)
             ->get();
 
-        return view('stats', compact('topScorers', 'topAssists', 'mostYellowCards', 'mostRedCards', 'mostAppearances'));
+        $goldenGlove = Player::with('team')
+            ->where('clean_sheets', '>', 0)
+            ->orderBy('clean_sheets', 'desc')
+            ->take(10)
+            ->get();
+
+        return view('stats', compact(
+            'topScorers',
+            'topAssists',
+            'topRated',
+            'mostMOTM',
+            'mostYellowCards',
+            'mostRedCards',
+            'mostAppearances',
+            'goldenGlove'
+        ));
     }
 }
