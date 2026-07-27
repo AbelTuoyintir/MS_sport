@@ -91,8 +91,12 @@ class DummyDataSeeder extends Seeder
                     'assists' => 0,
                     'rating' => rand(65, 95),
                     'nationality' => '🇬🇭',
-                    'appearances' => 0,
-                    'number' => rand(1, 99)
+                    'appearances' => rand(1, 10),
+                    'number' => rand(1, 99),
+                    'yellow_cards' => rand(0, 4),
+                    'red_cards' => (rand(1, 10) <= 2) ? 1 : 0,
+                    'clean_sheets' => ($pos === 'GK' || $pos === 'DEF') ? rand(0, 5) : 0,
+                    'motm_awards' => rand(0, 3),
                 ]);
                 if (count($starting_xi) < 11) {
                     $starting_xi[] = $player->id;
@@ -151,6 +155,54 @@ class DummyDataSeeder extends Seeder
             'tag' => 'Announcement',
             'is_published' => true,
         ]);
+
+        // Create dummy predictions from fans
+        $userNames = ['Abel', 'Kwame', 'John', 'Kofi', 'Ama', 'Yao', 'Araba', 'Kweku'];
+        $finishedGames = \App\Models\Game::where('status', 'finished')->get();
+        foreach ($finishedGames as $game) {
+            // Each game has 2-4 random predictions from our users
+            $predictors = array_rand(array_flip($userNames), rand(2, 4));
+            if (!is_array($predictors)) {
+                $predictors = [$predictors];
+            }
+            foreach ($predictors as $predictor) {
+                // Generate predictions: some correct, some close, some random
+                if (rand(1, 10) <= 4) {
+                    // Exact score prediction
+                    $predHome = $game->home_score;
+                    $predAway = $game->away_score;
+                } elseif (rand(1, 10) <= 7) {
+                    // Correct outcome prediction, but different score
+                    $actualDiff = $game->home_score - $game->away_score;
+                    if ($actualDiff > 0) {
+                        $predHome = rand(1, 4);
+                        $predAway = rand(0, $predHome - 1);
+                    } elseif ($actualDiff < 0) {
+                        $predAway = rand(1, 4);
+                        $predHome = rand(0, $predAway - 1);
+                    } else {
+                        $score = rand(0, 3);
+                        $predHome = $score;
+                        $predAway = $score;
+                    }
+                    // Ensure we don't accidentally match the exact score
+                    if ($predHome === $game->home_score && $predAway === $game->away_score) {
+                        $predHome += 1;
+                    }
+                } else {
+                    // Random prediction
+                    $predHome = rand(0, 4);
+                    $predAway = rand(0, 4);
+                }
+
+                \App\Models\Prediction::create([
+                    'game_id' => $game->id,
+                    'user_name' => $predictor,
+                    'home_score_prediction' => $predHome,
+                    'away_score_prediction' => $predAway,
+                ]);
+            }
+        }
     }
 
     private function generateEvents($game, $hScore, $aScore)
