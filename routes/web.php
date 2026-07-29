@@ -18,6 +18,7 @@ use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -112,4 +113,5 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     // Tactics
     Route::get('/tactics', [\App\Http\Controllers\TacticsController::class, 'index'])->name('manager.tactics.index');
     Route::post('/tactics', [\App\Http\Controllers\TacticsController::class, 'store'])->name('manager.tactics.store');
+    Route::post('/tactics/simulate', [\App\Http\Controllers\TacticsController::class, 'simulate'])->name('manager.tactics.simulate');
 });
