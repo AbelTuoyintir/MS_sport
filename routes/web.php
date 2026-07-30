@@ -112,4 +112,6 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     // Tactics
     Route::get('/tactics', [\App\Http\Controllers\TacticsController::class, 'index'])->name('manager.tactics.index');
     Route::post('/tactics', [\App\Http\Controllers\TacticsController::class, 'store'])->name('manager.tactics.store');
+    Route::get('/tactics/simulate', [\App\Http\Controllers\TacticsSimulationController::class, 'showForm'])->name('manager.tactics.simulate.form');
+    Route::post('/tactics/simulate', [\App\Http\Controllers\TacticsSimulationController::class, 'simulate'])->name('manager.tactics.simulate.run');
 });

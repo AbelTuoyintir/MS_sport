@@ -2,11 +2,19 @@
 
 @section('content')
 <div class="space-y-6">
-    <div class="flex justify-between items-center">
-        <h2 class="text-3xl font-black font-heading uppercase tracking-wider">Tactics & Lineup</h2>
-        <div class="bg-white/5 px-4 py-2 rounded-lg border border-white/10">
-            <span class="text-gray-400 text-xs uppercase font-bold tracking-wider mr-2">Current Formation:</span>
-            <span class="text-accent-gold font-bold">{{ $formation }}</span>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-3xl font-black font-heading uppercase tracking-wider">Tactics & Lineup</h2>
+            <p class="text-gray-400 text-xs">Set your team formation and select your starting XI players.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('manager.tactics.simulate.form') }}" class="bg-accent-gold text-bg-dark px-4 py-2 rounded-lg hover:bg-[#fff0a0] transition-all font-bold text-sm flex items-center gap-2">
+                Tactical Match Simulator
+            </a>
+            <div class="bg-white/5 px-4 py-2 rounded-lg border border-white/10">
+                <span class="text-gray-400 text-xs uppercase font-bold tracking-wider mr-2">Current Formation:</span>
+                <span class="text-accent-gold font-bold">{{ $formation }}</span>
+            </div>
         </div>
     </div>
 
