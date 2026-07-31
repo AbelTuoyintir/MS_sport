@@ -24,9 +24,14 @@
             <div>
                 <div class="text-accent-gold font-bold uppercase tracking-widest mb-2">{{ $player->position }} — #{{ $player->number ?? '?' }}</div>
                 <h1 class="font-display text-6xl mb-2">{{ $player->name }}</h1>
-                <div class="flex items-center justify-center md:justify-start gap-4">
+                <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
                     <div class="w-6 h-6 rounded-full" style="background-color: {{ $player->team->primary_color }}"></div>
                     <span class="font-bold">{{ $player->team->team_name }}</span>
+                </div>
+                <div class="flex justify-center md:justify-start">
+                    <a href="{{ route('players.compare', ['player1_id' => $player->id]) }}" class="bg-gradient-to-r from-amber-500 to-[#f0c040] hover:from-amber-600 hover:to-yellow-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all duration-200">
+                        ⚡ Compare Player
+                    </a>
                 </div>
             </div>
         </div>
