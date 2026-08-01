@@ -5,7 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>League Statistics & Leaderboard — MP League</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;500;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'gold': '#f0c040',
+              'gold2': '#c8930a',
+              'gold3': '#fff0a0',
+              'accent': '#00e5ff',
+              'accent2': '#007fa8',
+              'custom-red': '#ff3b3b',
+              'custom-green': '#22c55e',
+              'bg-dark': '#06090e',
+              'bg-dark2': '#0d1117',
+              'bg-dark3': '#161b24',
+              'bg-dark4': '#1e2530',
+              'border-dark': '#1e2a38',
+              'border-dark2': '#2a3848',
+              'text-light': '#e8edf4',
+              'muted': '#6b7a8d',
+              'muted2': '#99aabb',
+            },
+            fontFamily: {
+              'display': ['Bebas Neue', 'sans-serif'],
+              'heading': ['Barlow Condensed', 'sans-serif'],
+              'body': ['Barlow', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
     <style>
         body { font-family: 'Barlow', sans-serif; background: #06090e; color: #e8edf4; }
         .font-display { font-family: 'Bebas Neue', sans-serif; }
@@ -39,6 +70,8 @@
                 </button>
             </div>
         </div>
+        <a href="{{ route('home') }}" class="font-heading text-xs font-bold uppercase text-accent border border-accent/25 rounded-md px-4 py-2 hover:bg-accent/5 transition-all">← Back to Home</a>
+    </div>
 
         <!-- Tab Content 1: Player Statistics -->
         <div id="player-stats-tab" class="tab-content space-y-12">
@@ -296,6 +329,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
