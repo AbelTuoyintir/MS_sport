@@ -60,4 +60,56 @@ class PlayerController extends Controller
 
         return view('players.show', compact('player', 'recent_events'));
     }
+
+    public function compare(Request $request)
+    {
+        $all_players = Player::with('team')->orderBy('name')->get();
+
+        $player1 = null;
+        $player2 = null;
+
+        if ($request->has('player1_id')) {
+            $player1 = Player::with('team')->find($request->player1_id);
+        }
+        if ($request->has('player2_id')) {
+            $player2 = Player::with('team')->find($request->player2_id);
+        }
+
+        $player1_value = $player1 ? $this->calculateMarketValue($player1) : 0;
+        $player2_value = $player2 ? $this->calculateMarketValue($player2) : 0;
+
+        return view('players.compare', compact('all_players', 'player1', 'player2', 'player1_value', 'player2_value'));
+    }
+
+    private function calculateMarketValue($player)
+    {
+        // Base value from rating
+        $base = ($player->rating * $player->rating) * 300;
+
+        // Premium stats
+        $goalsPremium = $player->goals * 60000;
+        $assistsPremium = $player->assists * 45000;
+        $cleanSheetsPremium = $player->clean_sheets * 40000;
+        $appearancesPremium = $player->appearances * 10000;
+
+        $value = $base + $goalsPremium + $assistsPremium + $cleanSheetsPremium + $appearancesPremium;
+
+        // Discipline penalties
+        $value -= ($player->red_cards * 50000);
+        $value -= ($player->yellow_cards * 10000);
+
+        // Age factor
+        if ($player->age) {
+            if ($player->age < 23) {
+                $value *= 1.15; // Young prospect premium
+            } elseif ($player->age <= 29) {
+                $value *= 1.05; // Peak years premium
+            } else {
+                $deduction = ($player->age - 30) * 0.08;
+                $value *= max(0.4, 1.0 - $deduction); // Veterans decline gracefully to 40% minimum
+            }
+        }
+
+        return max(50000, round($value));
+    }
 }
