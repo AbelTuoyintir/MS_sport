@@ -33,6 +33,11 @@
                          ⚡ Compare Player
                      </a>
                 </div>
+                <div class="flex justify-center md:justify-start">
+                    <a href="{{ route('players.compare', ['player1_id' => $player->id]) }}" class="bg-gradient-to-r from-amber-500 to-[#f0c040] hover:from-amber-600 hover:to-yellow-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all duration-200">
+                        ⚡ Compare Player
+                    </a>
+                </div>
             </div>
         </div>
 
