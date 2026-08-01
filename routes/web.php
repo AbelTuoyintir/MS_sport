@@ -18,6 +18,7 @@ use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -34,6 +35,7 @@ Route::get('/leaderboard', [PredictionController::class, 'leaderboard'])->name('
 // Public pages
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/teams/{id}', [TeamController::class, 'showPublic'])->name('teams.show');
+Route::get('/players/compare', [PlayerController::class, 'compare'])->name('players.compare');
 Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('players.show');
 Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
@@ -113,4 +115,5 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     // Tactics
     Route::get('/tactics', [\App\Http\Controllers\TacticsController::class, 'index'])->name('manager.tactics.index');
     Route::post('/tactics', [\App\Http\Controllers\TacticsController::class, 'store'])->name('manager.tactics.store');
+    Route::post('/tactics/simulate', [\App\Http\Controllers\TacticsController::class, 'simulate'])->name('manager.tactics.simulate');
 });
