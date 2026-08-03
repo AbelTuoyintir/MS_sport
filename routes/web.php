@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\CompareController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -37,6 +39,8 @@ Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('play
 Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/stats', [\App\Http\Controllers\StatsController::class, 'index'])->name('stats');
+Route::get('/leaderboard', [PredictionController::class, 'leaderboard'])->name('leaderboard');
+Route::get('/compare', [CompareController::class, 'compare'])->name('compare');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
