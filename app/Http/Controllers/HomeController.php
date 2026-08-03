@@ -26,7 +26,32 @@ class HomeController extends Controller
         $top_assists = Player::with('team')->where('assists', '>', 0)->orderBy('assists', 'desc')->take(5)->get();
         $all_teams = \App\Models\Team::all();
 
-        return view('home', compact('standings', 'recent_games', 'news', 'top_scorers', 'top_assists', 'all_teams'));
+        // Predictor Leaderboard logic
+        $predictions = \App\Models\Prediction::with('game')->get();
+        $leaderboard = $predictions->groupBy('user_name')->map(function($userPredictions, $name) {
+            $score = 0;
+            foreach($userPredictions as $p) {
+                if ($p->game->status === 'finished') {
+                    // Exact score: 3 points
+                    if ($p->home_score_prediction == $p->game->home_score && $p->away_score_prediction == $p->game->away_score) {
+                        $score += 3;
+                    }
+                    // Correct result: 1 point
+                    elseif (($p->home_score_prediction > $p->away_score_prediction && $p->game->home_score > $p->game->away_score) ||
+                            ($p->home_score_prediction < $p->away_score_prediction && $p->game->home_score < $p->game->away_score) ||
+                            ($p->home_score_prediction == $p->away_score_prediction && $p->game->home_score == $p->game->away_score)) {
+                        $score += 1;
+                    }
+                }
+            }
+            return [
+                'name' => $name,
+                'score' => $score,
+                'count' => $userPredictions->count()
+            ];
+        })->sortByDesc('score')->take(5);
+
+        return view('home', compact('standings', 'recent_games', 'news', 'top_scorers', 'top_assists', 'all_teams', 'leaderboard'));
     }
 
     public function matchDetails($id)

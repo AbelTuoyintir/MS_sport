@@ -33,4 +33,14 @@ class Player extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function potm_awards()
+    {
+        return $this->hasMany(Game::class, 'potm_id');
+    }
+
+    public function getPotmAwardsCountAttribute()
+    {
+        return $this->potm_awards()->count();
+    }
 }

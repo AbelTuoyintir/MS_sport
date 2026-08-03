@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
@@ -67,6 +68,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/games/{game}/events', [GameController::class, 'events'])->name('admin.games.events');
     Route::post('/games/{game}/events', [GameController::class, 'storeEvent'])->name('admin.games.events.store');
     Route::resource('games', GameController::class)->names('admin.games');
+
+    // Team Management
+    Route::resource('teams', \App\Http\Controllers\Admin\TeamManagementController::class)->names('admin.teams');
 
     // News Management
     Route::resource('articles', ArticleController::class)->names('admin.articles');

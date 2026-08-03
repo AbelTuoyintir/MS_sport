@@ -139,6 +139,21 @@
                     </div>
                 </section>
 
+                @if($game->potm_id)
+                <section>
+                    <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Player of the Match</h3>
+                    <div class="glass-card p-6 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                            <i data-lucide="award"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-lg">{{ $game->potm->name }}</div>
+                            <div class="text-xs text-gray-400 uppercase">{{ $game->potm->team->team_name }}</div>
+                        </div>
+                    </div>
+                </section>
+                @endif
+
                 <section>
                     <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Head to Head</h3>
                     <div class="glass-card p-6 text-center text-gray-500 italic">

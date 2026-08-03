@@ -516,6 +516,31 @@
   <div class="reveal news-grid" id="news-grid"></div>
 </section>
 
+<!-- PREDICTOR LEADERBOARD -->
+<section class="py-12 sm:py-[60px] px-4 sm:px-6 md:px-10 bg-bg-dark border-t border-border-dark">
+  <div class="reveal flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-[14px] sm:w-[18px] h-[2px] bg-accent"></div>
+        <div class="font-heading text-[9px] sm:text-[10px] font-bold tracking-[2px] text-accent uppercase">Community</div>
+      </div>
+      <div class="font-display text-[clamp(28px,6vw,52px)] text-text-light leading-none">Top Predictors</div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    @forelse($leaderboard as $entry)
+    <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center">
+      <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold mb-3">{{ strtoupper(substr($entry['name'], 0, 1)) }}</div>
+      <div class="text-sm font-bold text-text-light mb-1">{{ $entry['name'] }}</div>
+      <div class="text-[10px] text-muted uppercase tracking-wider mb-2">{{ $entry['count'] }} Predictions</div>
+      <div class="text-2xl font-display text-accent">{{ $entry['score'] }} pts</div>
+    </div>
+    @empty
+    <div class="col-span-full text-center text-muted italic py-8">Start predicting scores to see the leaderboard!</div>
+    @endforelse
+  </div>
+</section>
+
 <!-- AWARDS SECTION -->
 <section class="py-12 sm:py-[60px] px-4 sm:px-6 md:px-10 bg-gradient-to-br from-amber-950/95 to-yellow-950/95 border-t border-b border-gold/15" id="awards">
   <div class="reveal flex flex-wrap items-end justify-between gap-3 mb-6 sm:mb-7">

@@ -45,8 +45,12 @@
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center font-bold">{{ $player->rating }}</div>
                             <div>
-                                <p class="font-bold">{{ $player->name }}</p>
-                                <p class="text-gray-400 text-xs">{{ $player->position }} @if($player->number) #{{ $player->number }} @endif</p>
+                                <p class="font-bold text-sm">{{ $player->name }}</p>
+                                <div class="flex gap-2 text-[10px] text-gray-400">
+                                    <span>{{ $player->position }} @if($player->number) #{{ $player->number }} @endif</span>
+                                    <span class="text-accent-gold">⚽ {{ $player->goals }}</span>
+                                    <span class="text-blue-400">👟 {{ $player->assists }}</span>
+                                </div>
                             </div>
                         </div>
                         <form action="{{ route('manager.players.destroy', $player->id) }}" method="POST">
@@ -93,7 +97,8 @@
             <div class="space-y-4">
                 <div class="flex justify-between items-center">
                     <span class="text-gray-400">Total Goals</span>
-                    <span class="font-bold">{{ number_format(optional(auth()->user()->team)->players?->avg('rating') ?? 0, 1) }}</span>
+                    <span class="font-bold text-accent-gold">{{ optional(auth()->user()->team)->players?->sum('goals') ?? 0 }}</span>
+                </div>
                 <div class="flex justify-between items-center">
                     <span class="text-gray-400">Avg Rating</span>
                     <span class="font-bold">{{ number_format(optional(auth()->user()->team)->players?->avg('rating') ?? 0, 1) }}</span>
@@ -180,6 +185,7 @@ function toggleModal(id) {
     const modal = document.getElementById(id);
     modal.classList.toggle('hidden');
 }
+</script>
 <!-- Edit Team Modal -->
 <div id="edit-team-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-lg p-6">
@@ -211,8 +217,6 @@ function toggleModal(id) {
         </form>
     </div>
 </div>
-
-</script>
 <!-- Add Staff Modal -->
 <div id="add-staff-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
     <div class="glass-card w-full max-w-md p-6">

@@ -44,11 +44,28 @@
                 <div class="text-4xl font-black text-accent-gold mb-1">{{ $player->yellow_cards }}</div>
                 <div class="text-xs text-gray-500 uppercase font-bold">Yellows</div>
             </div>
-            <div class="glass-card p-6 text-center">
+            <div class="glass-card p-6 text-center border-t-2 border-red-500/50">
                 <div class="text-4xl font-black text-red-500 mb-1">{{ $player->red_cards }}</div>
                 <div class="text-xs text-gray-500 uppercase font-bold">Reds</div>
             </div>
         </div>
+
+        @if($player->potm_awards_count > 0)
+        <div class="mt-8 glass-card p-6 border-l-4 border-gold bg-gold/5 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
+                    <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-gold font-bold uppercase tracking-wider text-xs">Season Achievement</div>
+                    <div class="text-2xl font-black">Player of the Match × {{ $player->potm_awards_count }}</div>
+                </div>
+            </div>
+            <div class="text-gold/30">
+                <i data-lucide="award" class="w-16 h-16"></i>
+            </div>
+        </div>
+        @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <div class="glass-card p-8">

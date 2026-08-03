@@ -38,6 +38,7 @@ class GameController extends Controller
 
     public function edit(Game $game)
     {
+        $game->load(['homeTeam.players', 'awayTeam.players']);
         $teams = Team::all();
         return view('admin.games.edit', compact('game', 'teams'));
     }
@@ -54,6 +55,7 @@ class GameController extends Controller
             'away_score' => 'required|integer|min:0',
             'venue' => 'nullable|string|max:255',
             'live_minute' => 'nullable|string|max:255',
+            'potm_id' => 'nullable|exists:players,id',
         ]);
 
         $oldStatus = $game->status;
@@ -62,6 +64,16 @@ class GameController extends Controller
         // If game just finished, we could trigger stats updates here if not using dynamic service
         if ($oldStatus !== 'finished' && $game->status === 'finished') {
             // Log activity or update player appearance counts
+            $totalGoals = $game->home_score + $game->away_score;
+            if ($totalGoals >= 5) {
+                \App\Models\Article::create([
+                    'title' => "GOAL FEST: {$game->homeTeam->team_name} {$game->home_score} - {$game->away_score} {$game->awayTeam->team_name}!",
+                    'slug' => \Illuminate\Support\Str::slug("goal-fest-{$game->homeTeam->team_name}-vs-{$game->awayTeam->team_name}-" . uniqid()),
+                    'content' => "Spectators were treated to an absolute classic as {$game->homeTeam->team_name} and {$game->awayTeam->team_name} played out a high-scoring game finishing {$game->home_score} to {$game->away_score}. Matchweek {$game->matchweek} certainly delivered the drama!",
+                    'tag' => 'Match Analysis',
+                    'is_published' => true,
+                ]);
+            }
         }
 
         return redirect()->route('admin.games.index')->with('success', 'Game updated successfully.');

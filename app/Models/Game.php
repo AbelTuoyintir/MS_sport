@@ -41,4 +41,9 @@ class Game extends Model
     {
         return $this->hasMany(MatchSquad::class);
     }
+
+    public function potm()
+    {
+        return $this->belongsTo(Player::class, 'potm_id');
+    }
 }

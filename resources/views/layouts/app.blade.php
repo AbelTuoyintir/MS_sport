@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Apex League — Admin Panel</title>
+<title>MP League — Admin Panel</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -260,7 +260,7 @@ button{font-family:var(--font-body);cursor:pointer}
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20M2 12h20M12 2c-3 4-3 14 0 20M12 2c3 4 3 14 0 20"/></svg>
     </div>
     <div>
-      <div class="logo-text">APEX LEAGUE</div>
+      <div class="logo-text">MP LEAGUE</div>
       <div class="logo-sub">Admin Panel</div>
     </div>
   </div>
@@ -275,10 +275,10 @@ button{font-family:var(--font-body);cursor:pointer}
 
   <div class="nav-section">
     <div class="nav-label">Management</div>
-    <div class="nav-item" data-page="teams">
+    <a href="{{ route('admin.teams.index') }}" class="nav-item {{ request()->routeIs('admin.teams.*') ? 'active' : '' }}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Teams
-    </div>
+    </a>
     <div class="nav-item" data-page="players">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a6 6 0 0 1 12 0v2"/></svg>
       Players
@@ -485,12 +485,12 @@ const AWARDS=[
 ];
 
 const USERS=[
-  {name:'Super Admin',email:'admin@apexleague.com',role:'superadmin',rl:'Super Admin',last:'Now',online:true},
-  {name:'James Mitchell',email:'j.mitchell@apex.com',role:'admin',rl:'Admin',last:'1h ago',online:false},
-  {name:'Sarah Connor',email:'s.connor@apex.com',role:'editor',rl:'Editor',last:'30m ago',online:true},
-  {name:'Tom Bradley',email:'t.bradley@apex.com',role:'editor',rl:'Editor',last:'2h ago',online:false},
-  {name:'Lisa Park',email:'l.park@apex.com',role:'viewer',rl:'Viewer',last:'Yesterday',online:false},
-  {name:'Marcus Green',email:'m.green@apex.com',role:'viewer',rl:'Viewer',last:'3 days ago',online:false},
+  {name:'Super Admin',email:'admin@mpleague.com',role:'superadmin',rl:'Super Admin',last:'Now',online:true},
+  {name:'James Mitchell',email:'j.mitchell@mpleague.com',role:'admin',rl:'Admin',last:'1h ago',online:false},
+  {name:'Sarah Connor',email:'s.connor@mpleague.com',role:'editor',rl:'Editor',last:'30m ago',online:true},
+  {name:'Tom Bradley',email:'t.bradley@mpleague.com',role:'editor',rl:'Editor',last:'2h ago',online:false},
+  {name:'Lisa Park',email:'l.park@mpleague.com',role:'viewer',rl:'Viewer',last:'Yesterday',online:false},
+  {name:'Marcus Green',email:'m.green@mpleague.com',role:'viewer',rl:'Viewer',last:'3 days ago',online:false},
 ];
 
 const NEWS=[
