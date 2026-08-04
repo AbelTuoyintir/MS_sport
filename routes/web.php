@@ -18,6 +18,7 @@ use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes

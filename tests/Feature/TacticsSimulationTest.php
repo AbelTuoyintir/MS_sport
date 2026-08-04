@@ -12,59 +12,108 @@ class TacticsSimulationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_non_manager_cannot_access_simulation_page()
+    public function test_manager_can_simulate_friendly_match_with_opponent()
     {
-        $user = User::factory()->create([
-            'role' => 'fan'
-        ]);
-
-        $response = $this->actingAs($user)->get('/manager/tactics/simulate');
-
-        $response->assertRedirect();
-    }
-
-    public function test_manager_can_access_simulation_page()
-    {
-        $team = Team::create([
-            'reference_code' => 'TEST-123',
-            'team_name' => 'Test Team',
-            'team_size' => '11',
+        // 1. Setup home team (manager's team)
+        $homeTeam = Team::create([
+            'reference_code' => 'TEAM-HOME',
+            'team_name' => 'Home Wanderers',
+            'team_size' => '15',
             'division' => 'premier',
-            'primary_color' => '#000000',
+            'primary_color' => '#111111',
             'secondary_color' => '#ffffff',
             'registration_status' => 'approved',
-            'password' => 'password'
+            'password' => 'password',
+            'home_stadium' => 'Home Stadium'
         ]);
 
-        $user = User::factory()->create([
+        $manager = User::factory()->create([
             'role' => 'manager',
-            'team_id' => $team->id
+            'team_id' => $homeTeam->id
         ]);
 
-        $response = $this->actingAs($user)->get('/manager/tactics/simulate');
+        // Create starting XI for home team
+        $homePlayerIds = [];
+        for ($i = 0; $i < 11; $i++) {
+            $player = Player::create([
+                'team_id' => $homeTeam->id,
+                'name' => "Home Player $i",
+                'position' => 'MID',
+                'goals' => 0,
+                'rating' => 85,
+                'nationality' => '🇬🇭'
+            ]);
+            $homePlayerIds[] = $player->id;
+        }
+        $homeTeam->update(['starting_xi' => $homePlayerIds]);
 
-        $response->assertStatus(200);
-        $response->assertSee('Tactical Match Simulator');
-        $response->assertSee('Simulator Standby');
-    }
-
-    public function test_manager_can_run_simulation()
-    {
-        $team = Team::create([
-            'reference_code' => 'TEST-123',
-            'team_name' => 'My Dream Team',
-            'team_size' => '11',
+        // 2. Setup opponent team
+        $awayTeam = Team::create([
+            'reference_code' => 'TEAM-AWAY',
+            'team_name' => 'Away Invaders',
+            'team_size' => '15',
             'division' => 'premier',
-            'primary_color' => '#000000',
+            'primary_color' => '#ff0000',
             'secondary_color' => '#ffffff',
             'registration_status' => 'approved',
-            'password' => 'password'
+            'password' => 'password',
+            'home_stadium' => 'Away Stadium'
         ]);
 
-        $opponent = Team::create([
-            'reference_code' => 'TEST-456',
-            'team_name' => 'Opponent FC',
-            'team_size' => '11',
+        // Create starting XI for away team
+        $awayPlayerIds = [];
+        for ($i = 0; $i < 11; $i++) {
+            $player = Player::create([
+                'team_id' => $awayTeam->id,
+                'name' => "Away Player $i",
+                'position' => 'MID',
+                'goals' => 0,
+                'rating' => 80,
+                'nationality' => '🇬🇭'
+            ]);
+            $awayPlayerIds[] = $player->id;
+        }
+        $awayTeam->update(['starting_xi' => $awayPlayerIds]);
+
+        // 3. Act: Post to simulate endpoint
+        $response = $this->actingAs($manager)->postJson('/manager/tactics/simulate', [
+            'opponent_team_id' => $awayTeam->id
+        ]);
+
+        // 4. Assert response structure and status
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'home_team' => ['name', 'primary_color', 'badge'],
+            'away_team' => ['name', 'primary_color', 'badge'],
+            'home_score',
+            'away_score',
+            'events' => [
+                '*' => ['minute', 'type', 'team_id', 'description']
+            ],
+            'stats' => [
+                'possession',
+                'shots',
+                'shots_on_target',
+                'fouls',
+                'corners'
+            ]
+        ]);
+
+        // Confirm score matches simulation
+        $data = $response->json();
+        $this->assertEquals('Home Wanderers', $data['home_team']['name']);
+        $this->assertEquals('Away Invaders', $data['away_team']['name']);
+        $this->assertIsInt($data['home_score']);
+        $this->assertIsInt($data['away_score']);
+        $this->assertNotEmpty($data['events']);
+    }
+
+    public function test_guest_cannot_simulate_tactics()
+    {
+        $awayTeam = Team::create([
+            'reference_code' => 'TEAM-AWAY',
+            'team_name' => 'Away Invaders',
+            'team_size' => '15',
             'division' => 'premier',
             'primary_color' => '#ff0000',
             'secondary_color' => '#ffffff',
@@ -72,43 +121,11 @@ class TacticsSimulationTest extends TestCase
             'password' => 'password'
         ]);
 
-        $user = User::factory()->create([
-            'role' => 'manager',
-            'team_id' => $team->id
+        $response = $this->postJson('/manager/tactics/simulate', [
+            'opponent_team_id' => $awayTeam->id
         ]);
 
-        // Add some players to My Dream Team
-        for ($i = 0; $i < 5; $i++) {
-            Player::create([
-                'team_id' => $team->id,
-                'name' => "My Player $i",
-                'position' => 'MID',
-                'goals' => 0,
-                'rating' => 85,
-                'nationality' => 'GH'
-            ]);
-        }
-
-        // Add some players to Opponent FC
-        for ($i = 0; $i < 5; $i++) {
-            Player::create([
-                'team_id' => $opponent->id,
-                'name' => "Opponent Player $i",
-                'position' => 'MID',
-                'goals' => 0,
-                'rating' => 75,
-                'nationality' => 'NG'
-            ]);
-        }
-
-        $response = $this->actingAs($user)->post('/manager/tactics/simulate', [
-            'opponent_team_id' => $opponent->id,
-            'strategy' => 'attacking'
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertSee('Live-Text Commentary Play-by-Play');
-        $response->assertSee('My Dream Team');
-        $response->assertSee('Opponent FC');
+        // Guests should be redirected to login (or 401 Unauthorized if JSON request)
+        $response->assertStatus(401);
     }
 }
