@@ -24,9 +24,14 @@
             <div>
                 <div class="text-accent-gold font-bold uppercase tracking-widest mb-2">{{ $player->position }} — #{{ $player->number ?? '?' }}</div>
                 <h1 class="font-display text-6xl mb-2">{{ $player->name }}</h1>
-                <div class="flex items-center justify-center md:justify-start gap-4">
+                 <div class="flex items-center justify-center md:justify-start gap-4 mb-4">
                     <div class="w-6 h-6 rounded-full" style="background-color: {{ $player->team->primary_color }}"></div>
                     <span class="font-bold">{{ $player->team->team_name }}</span>
+                 </div>
+                 <div class="flex justify-center md:justify-start">
+                     <a href="{{ route('players.compare', ['player1_id' => $player->id]) }}" class="bg-gradient-to-r from-amber-500 to-[#f0c040] hover:from-amber-600 hover:to-yellow-500 text-black font-extrabold px-6 py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg transition-all duration-200">
+                         ⚡ Compare Player
+                     </a>
                 </div>
             </div>
         </div>
@@ -49,6 +54,23 @@
                 <div class="text-xs text-gray-500 uppercase font-bold">Reds</div>
             </div>
         </div>
+
+        @if($player->motm_awards > 0)
+        <div class="mt-8 glass-card p-6 border-l-4 border-[#f0c040] bg-[#f0c040]/5 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-[#f0c040]/20 flex items-center justify-center text-accent-gold">
+                    <span class="text-xl">🏆</span>
+                </div>
+                <div>
+                    <div class="text-accent-gold font-bold uppercase tracking-wider text-xs">Season Achievement</div>
+                    <div class="text-2xl font-black">Player of the Match × {{ $player->motm_awards }}</div>
+                </div>
+            </div>
+            <div class="text-accent-gold/25 text-5xl">
+                🏆
+            </div>
+        </div>
+        @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <div class="glass-card p-8">
