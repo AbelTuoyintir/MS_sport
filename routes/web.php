@@ -51,6 +51,7 @@ Route::post('/api/owners', [TeamRegistrationController::class, 'storeOwners'])->
 // Payment routes
 Route::post('/api/process-payment', [PaymentController::class, 'processPayment'])->name('api.payment.process');
 Route::get('/payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::get('/api/payment/callback', [PaymentController::class, 'callback']);
 Route::get('/api/payment/status/{referenceCode}', [PaymentController::class, 'checkPaymentStatus'])->name('api.payment.status');
 Route::post('/api/payment/verify/{referenceCode}', [PaymentController::class, 'verifyPayment'])->name('api.payment.verify');
 Route::get('/api/payment/details/{teamId}', [PaymentController::class, 'getPaymentDetails'])->name('api.payment.details');
