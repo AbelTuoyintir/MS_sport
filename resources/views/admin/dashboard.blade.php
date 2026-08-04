@@ -293,19 +293,19 @@
                         </div>
                         <div class="p-5 md:p-6 space-y-4">
                             <!-- Add Team Button -->
-                            <button class="action-btn w-full bg-gradient-to-r from-[#f0c040] to-[#c8930a] hover:from-[#fff0a0] hover:to-[#f0c040] text-black font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <a href="{{ route('admin.teams.create') }}" class="action-btn w-full bg-gradient-to-r from-[#f0c040] to-[#c8930a] hover:from-[#fff0a0] hover:to-[#f0c040] text-black font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                 </svg>
                                 <span class="text-sm uppercase tracking-wide">Add Team</span>
-                            </button>
+                            </a>
                             
                             <!-- Add Player Button -->
-                            <button class="action-btn w-full bg-gradient-to-r from-[#00e5ff] to-[#007fa8] hover:from-[#4deaff] hover:to-[#00e5ff] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <button class="action-btn w-full bg-gradient-to-r from-[#00e5ff] to-[#007fa8] hover:from-[#4deaff] hover:to-[#00e5ff] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl opacity-60 cursor-not-allowed">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                                 </svg>
-                                <span class="text-sm uppercase tracking-wide">Add Player</span>
+                                <span class="text-sm uppercase tracking-wide">Add Player (Manager Only)</span>
                             </button>
 
                             <!-- Divider -->
@@ -327,12 +327,12 @@
                             </button>
 
                             <!-- Schedule Match Button -->
-                            <button class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">
+                            <a href="{{ route('admin.games.create') }}" class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                 </svg>
                                 <span class="text-xs uppercase tracking-wide">Schedule Match</span>
-                            </button>
+                            </a>
 
                             <!-- Generate Report Button -->
                             <button class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">

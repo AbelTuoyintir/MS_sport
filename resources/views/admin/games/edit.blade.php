@@ -68,9 +68,30 @@
                 </div>
             </div>
 
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Player of the Match</label>
+                <select name="potm_id" class="w-full bg-[#161b24] border border-white/10 rounded-lg px-4 py-2 text-white focus:border-accent-gold outline-none">
+                    <option value="">Select POTM</option>
+                    @if($game->homeTeam)
+                        <optgroup label="{{ $game->homeTeam->team_name }}" class="bg-[#161b24]">
+                            @foreach($game->homeTeam->players as $p)
+                                <option value="{{ $p->id }}" {{ $game->potm_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                            @endforeach
+                        </optgroup>
+                    @endif
+                    @if($game->awayTeam)
+                        <optgroup label="{{ $game->awayTeam->team_name }}" class="bg-[#161b24]">
+                            @foreach($game->awayTeam->players as $p)
+                                <option value="{{ $p->id }}" {{ $game->potm_id == $p->id ? 'selected' : '' }}>{{ $p->name }}</option>
+                            @endforeach
+                        </optgroup>
+                    @endif
+                </select>
+            </div>
+
             <div class="flex gap-4">
-                <button type="submit" class="flex-1 bg-accent-gold text-bg-dark font-bold py-3 rounded-lg">Update Match</button>
-                <a href="{{ route('admin.games.index') }}" class="flex-1 bg-white/5 text-center font-bold py-3 rounded-lg border border-white/10">Cancel</a>
+                <button type="submit" class="flex-1 bg-accent-gold text-bg-dark font-bold py-3 rounded-lg hover:opacity-90 transition-opacity cursor-pointer">Update Match</button>
+                <a href="{{ route('admin.games.index') }}" class="flex-1 bg-white/5 text-center font-bold py-3 rounded-lg border border-white/10 hover:bg-white/10 transition-colors">Cancel</a>
             </div>
         </form>
     </div>
