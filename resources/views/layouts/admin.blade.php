@@ -34,11 +34,20 @@
     <nav class="border-b border-white/10 bg-black/20 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-black"></i>
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-black"></i>
+                        </div>
+                        <span class="font-black font-heading text-xl uppercase tracking-wider">Admin Control</span>
                     </div>
-                    <span class="font-black font-heading text-xl uppercase tracking-wider">Admin Control</span>
+                    <div class="hidden md:flex items-center gap-4">
+                        <a href="{{ route('admin.dashboard') }}" class="text-sm font-semibold {{ request()->routeIs('admin.dashboard') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Dashboard</a>
+                        <a href="{{ route('admin.teams.index') }}" class="text-sm font-semibold {{ request()->routeIs('admin.teams.*') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Teams</a>
+                        <a href="{{ route('admin.games.index') }}" class="text-sm font-semibold {{ request()->routeIs('admin.games.*') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Matches</a>
+                        <a href="{{ route('admin.articles.index') }}" class="text-sm font-semibold {{ request()->routeIs('admin.articles.*') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">News</a>
+                        <a href="{{ route('admin.payments') }}" class="text-sm font-semibold {{ request()->routeIs('admin.payments') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Payments</a>
+                    </div>
                 </div>
                 <div class="flex items-center gap-6">
                     <a href="{{ route('home') }}" class="text-sm text-gray-400 hover:text-white transition-colors">Site Home</a>

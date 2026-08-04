@@ -218,6 +218,7 @@
     </div>
     <div class="flex flex-col gap-2">
       <a href="#standings" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Standings</a>
+      <a href="{{ route('predictions.leaderboard') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Leaderboard</a>
       <a href="#matches" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Matches</a>
       <a href="#news" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">News</a>
       <a href="#awards" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Awards</a>
@@ -247,6 +248,7 @@
       <a href="{{ route('search') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Search</a>
     <a href="#standings" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Standings</a>
     <a href="{{ route('stats') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Stats</a>
+    <a href="{{ route('predictions.leaderboard') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Leaderboard</a>
     <a href="#matches" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Matches</a>
     <a href="#news" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">News</a>
     <a href="#awards" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Awards</a>
