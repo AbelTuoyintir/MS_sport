@@ -38,6 +38,7 @@ class GameController extends Controller
 
     public function edit(Game $game)
     {
+        $game->load(['homeTeam.players', 'awayTeam.players']);
         $teams = Team::all();
         return view('admin.games.edit', compact('game', 'teams'));
     }
@@ -54,9 +55,11 @@ class GameController extends Controller
             'away_score' => 'required|integer|min:0',
             'venue' => 'nullable|string|max:255',
             'live_minute' => 'nullable|string|max:255',
+            'potm_id' => 'nullable|exists:players,id',
         ]);
 
         $oldStatus = $game->status;
+        $oldPotmId = $game->potm_id;
         $game->update($validated);
 
         // If game just finished, we could trigger stats updates here if not using dynamic service
@@ -67,6 +70,33 @@ class GameController extends Controller
             }
             foreach ($game->awayTeam->players as $player) {
                 $player->increment('appearances');
+            }
+
+            // Goal fest check (5 or more goals)
+            $totalGoals = $game->home_score + $game->away_score;
+            if ($totalGoals >= 5) {
+                \App\Models\Article::create([
+                    'title' => "GOAL FEST: {$game->homeTeam->team_name} {$game->home_score} - {$game->away_score} {$game->awayTeam->team_name}!",
+                    'slug' => \Illuminate\Support\Str::slug("goal-fest-{$game->homeTeam->team_name}-vs-{$game->awayTeam->team_name}-" . uniqid()),
+                    'content' => "Spectators were treated to an absolute classic as {$game->homeTeam->team_name} and {$game->awayTeam->team_name} played out a high-scoring game finishing {$game->home_score} to {$game->away_score}. Matchweek {$game->matchweek} certainly delivered the drama!",
+                    'tag' => 'Match Analysis',
+                    'is_published' => true,
+                ]);
+            }
+        }
+
+        if ($game->status === 'finished' && $game->potm_id && $game->potm_id != $oldPotmId) {
+            // Increment new potm
+            $newPotm = \App\Models\Player::find($game->potm_id);
+            if ($newPotm) {
+                $newPotm->increment('motm_awards');
+            }
+            // Decrement old potm if existed
+            if ($oldPotmId) {
+                $oldPotm = \App\Models\Player::find($oldPotmId);
+                if ($oldPotm && $oldPotm->motm_awards > 0) {
+                    $oldPotm->decrement('motm_awards');
+                }
             }
         }
 

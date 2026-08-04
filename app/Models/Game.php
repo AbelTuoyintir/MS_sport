@@ -16,6 +16,7 @@ class Game extends Model
         'status',
         'venue',
         'live_minute',
+        'potm_id',
     ];
 
     protected $casts = [
@@ -40,5 +41,10 @@ class Game extends Model
     public function squads()
     {
         return $this->hasMany(MatchSquad::class);
+    }
+
+    public function potm()
+    {
+        return $this->belongsTo(Player::class, 'potm_id');
     }
 }

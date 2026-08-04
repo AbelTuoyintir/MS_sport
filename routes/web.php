@@ -67,6 +67,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/payment/{paymentId}/verify', [PaymentController::class, 'manualVerify'])->name('admin.payment.verify');
     Route::post('/payment/{paymentId}/refund', [PaymentController::class, 'refundPayment'])->name('admin.payment.refund');
 
+    // Team Management
+    Route::resource('teams', \App\Http\Controllers\Admin\TeamManagementController::class)->names('admin.teams');
+
     // Game Management
     Route::get('/games/{game}/events', [GameController::class, 'events'])->name('admin.games.events');
     Route::post('/games/{game}/events', [GameController::class, 'storeEvent'])->name('admin.games.events.store');

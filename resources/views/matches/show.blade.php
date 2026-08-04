@@ -298,6 +298,21 @@
                     </div>
                 </section>
 
+                @if($game->potm_id && $game->potm)
+                <section>
+                    <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Player of the Match</h3>
+                    <div class="glass-card p-6 flex items-center gap-4 bg-gradient-to-r from-yellow-500/10 to-transparent border border-yellow-500/20">
+                        <div class="w-12 h-12 rounded-full bg-[#f0c040]/20 flex items-center justify-center text-accent-gold">
+                            <span class="text-xl">🏆</span>
+                        </div>
+                        <div>
+                            <a href="{{ route('players.show', $game->potm_id) }}" class="font-bold text-lg hover:text-accent-gold transition-colors block">{{ $game->potm->name }}</a>
+                            <div class="text-xs text-gray-400 uppercase tracking-widest">{{ $game->potm->team->team_name ?? 'N/A' }}</div>
+                        </div>
+                    </div>
+                </section>
+                @endif
+
                 <section>
                     <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Head to Head</h3>
                     <div class="glass-card p-6 space-y-6">

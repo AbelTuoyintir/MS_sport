@@ -103,12 +103,24 @@ class TransferController extends Controller
 
             // Execute transfer
             $player = $offer->player;
+            $oldTeamName = $player->team->team_name;
             $player->update(['team_id' => $offer->buying_team_id]);
+            $player->refresh();
+            $newTeamName = $player->team->team_name;
 
             // Close listings
             TransferListing::where('player_id', $player->id)->update(['status' => 'sold']);
 
-            return redirect()->back()->with('success', 'Transfer completed!');
+            // Automatically generate a News Article
+            \App\Models\Article::create([
+                'title' => "TRANSFER DONE: {$player->name} Joins {$newTeamName}!",
+                'slug' => \Illuminate\Support\Str::slug("transfer-{$player->name}-joins-{$newTeamName}-" . uniqid()),
+                'content' => "{$player->name} has officially completed a move from {$oldTeamName} to {$newTeamName} for a fee of GH₵ " . number_format($offer->offer_amount, 2) . ". The manager of {$newTeamName} expressed great delight in securing the player's signature.",
+                'tag' => 'Transfer',
+                'is_published' => true,
+            ]);
+
+            return redirect()->back()->with('success', 'Transfer completed and news article generated!');
         } else {
             $offer->update(['status' => 'rejected']);
             return redirect()->back()->with('success', 'Offer rejected.');
