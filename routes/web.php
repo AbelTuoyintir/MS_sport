@@ -30,6 +30,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
 Route::post('/vote', [VoteController::class, 'store'])->name('vote.store');
 Route::post('/predictions', [PredictionController::class, 'store'])->name('predictions.store');
+Route::post('/player-ratings', [\App\Http\Controllers\PlayerRatingController::class, 'store'])->name('player-ratings.store');
 Route::get('/leaderboard', [PredictionController::class, 'leaderboard'])->name('predictions.leaderboard');
 
 // Public pages

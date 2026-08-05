@@ -33,4 +33,14 @@ class Player extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function ratings()
+    {
+        return $this->hasMany(PlayerRating::class);
+    }
+
+    public function averageRatingForMatch($game_id)
+    {
+        return round($this->ratings()->where('game_id', $game_id)->avg('rating') ?? 0, 1);
+    }
 }

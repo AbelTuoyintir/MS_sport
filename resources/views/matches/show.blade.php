@@ -242,18 +242,77 @@
                 </section>
 
                 <section>
-                    <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Lineups</h3>
+                    <h3 class="font-display text-3xl mb-4 border-b border-white/10 pb-2">Lineups & Fan Performance Ratings</h3>
+
+                    @if(session('success'))
+                        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl mb-4 text-xs font-semibold">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl mb-4 text-xs font-semibold">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        @php
+                            $homePlayers = $game->squads->where('team_id', $game->home_team_id);
+                            if ($homePlayers->isEmpty()) {
+                                $homePlayers = $game->homeTeam->players->map(function($p, $idx) {
+                                    return (object)[
+                                        'jersey_number' => $p->number ?? ($idx + 1),
+                                        'player' => $p,
+                                        'role' => $p->position
+                                    ];
+                                });
+                            }
+
+                            $awayPlayers = $game->squads->where('team_id', $game->away_team_id);
+                            if ($awayPlayers->isEmpty()) {
+                                $awayPlayers = $game->awayTeam->players->map(function($p, $idx) {
+                                    return (object)[
+                                        'jersey_number' => $p->number ?? ($idx + 1),
+                                        'player' => $p,
+                                        'role' => $p->position
+                                    ];
+                                });
+                            }
+                        @endphp
                         <div>
                             <h4 class="font-heading font-bold uppercase mb-4 accent-gold">{{ $game->homeTeam->team_name }}</h4>
                             <div class="space-y-2">
-                                @foreach($game->squads->where('team_id', $game->home_team_id) as $squad)
-                                    <div class="glass-card p-3 flex items-center justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-xs font-bold text-gray-500 w-4">{{ $squad->jersey_number }}</span>
-                                            <span class="font-semibold">{{ $squad->player->name }}</span>
+                                @foreach($homePlayers as $squad)
+                                    @php
+                                        $avgRating = $squad->player->averageRatingForMatch($game->id);
+                                    @endphp
+                                    <div class="glass-card p-3 flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-xs font-bold text-gray-500 w-4">{{ $squad->jersey_number }}</span>
+                                                <span class="font-semibold">{{ $squad->player->name }}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                @if($avgRating > 0)
+                                                    <span class="text-xs font-bold bg-[#f0c040]/10 text-[#f0c040] px-2 py-0.5 rounded flex items-center gap-1">⭐ {{ $avgRating }}</span>
+                                                @endif
+                                                <span class="text-[10px] text-gray-500 uppercase bg-white/5 px-2 py-0.5 rounded">{{ $squad->role }}</span>
+                                            </div>
                                         </div>
-                                        <span class="text-[10px] text-gray-500 uppercase">{{ $squad->role }}</span>
+                                        @if($game->status === 'finished')
+                                            <form action="{{ route('player-ratings.store') }}" method="POST" class="flex items-center gap-2 mt-1 pt-2 border-t border-white/5">
+                                                @csrf
+                                                <input type="hidden" name="player_id" value="{{ $squad->player->id }}">
+                                                <input type="hidden" name="game_id" value="{{ $game->id }}">
+                                                <label class="text-[9px] text-gray-400 uppercase tracking-wider">Rate Player:</label>
+                                                <select name="rating" required class="bg-black/40 border border-white/10 rounded px-1.5 py-0.5 text-[10px] text-white outline-none">
+                                                    @for($r = 10; $r >= 1; $r--)
+                                                        <option value="{{ $r }}">{{ $r }}</option>
+                                                    @endfor
+                                                </select>
+                                                <button type="submit" class="bg-[#f0c040] hover:bg-yellow-500 transition-colors text-black font-bold text-[9px] px-2 py-0.5 rounded font-heading uppercase tracking-wider">Submit</button>
+                                            </form>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
@@ -261,13 +320,37 @@
                         <div>
                             <h4 class="font-heading font-bold uppercase mb-4 accent-gold">{{ $game->awayTeam->team_name }}</h4>
                             <div class="space-y-2">
-                                @foreach($game->squads->where('team_id', $game->away_team_id) as $squad)
-                                    <div class="glass-card p-3 flex items-center justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <span class="text-xs font-bold text-gray-500 w-4">{{ $squad->jersey_number }}</span>
-                                            <span class="font-semibold">{{ $squad->player->name }}</span>
+                                @foreach($awayPlayers as $squad)
+                                    @php
+                                        $avgRating = $squad->player->averageRatingForMatch($game->id);
+                                    @endphp
+                                    <div class="glass-card p-3 flex flex-col gap-2">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-xs font-bold text-gray-500 w-4">{{ $squad->jersey_number }}</span>
+                                                <span class="font-semibold">{{ $squad->player->name }}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                @if($avgRating > 0)
+                                                    <span class="text-xs font-bold bg-[#f0c040]/10 text-[#f0c040] px-2 py-0.5 rounded flex items-center gap-1">⭐ {{ $avgRating }}</span>
+                                                @endif
+                                                <span class="text-[10px] text-gray-500 uppercase bg-white/5 px-2 py-0.5 rounded">{{ $squad->role }}</span>
+                                            </div>
                                         </div>
-                                        <span class="text-[10px] text-gray-500 uppercase">{{ $squad->role }}</span>
+                                        @if($game->status === 'finished')
+                                            <form action="{{ route('player-ratings.store') }}" method="POST" class="flex items-center gap-2 mt-1 pt-2 border-t border-white/5">
+                                                @csrf
+                                                <input type="hidden" name="player_id" value="{{ $squad->player->id }}">
+                                                <input type="hidden" name="game_id" value="{{ $game->id }}">
+                                                <label class="text-[9px] text-gray-400 uppercase tracking-wider">Rate Player:</label>
+                                                <select name="rating" required class="bg-black/40 border border-white/10 rounded px-1.5 py-0.5 text-[10px] text-white outline-none">
+                                                    @for($r = 10; $r >= 1; $r--)
+                                                        <option value="{{ $r }}">{{ $r }}</option>
+                                                    @endfor
+                                                </select>
+                                                <button type="submit" class="bg-[#f0c040] hover:bg-yellow-500 transition-colors text-black font-bold text-[9px] px-2 py-0.5 rounded font-heading uppercase tracking-wider">Submit</button>
+                                            </form>
+                                        @endif
                                     </div>
                                 @endforeach
                             </div>
