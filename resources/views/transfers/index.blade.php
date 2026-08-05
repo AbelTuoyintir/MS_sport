@@ -83,6 +83,21 @@
                 <button onclick="toggleModal('list-player-modal')" class="w-full bg-accent-gold text-bg-dark font-bold py-3 rounded-lg mb-4">List a Player</button>
                 <div class="text-[10px] text-gray-500 text-center uppercase">List your players to receive offers</div>
             </div>
+
+            <div class="glass-card p-6 bg-gradient-to-b from-[#00e5ff]/5 to-transparent border border-[#00e5ff]/20">
+                <h3 class="text-lg font-bold mb-4 text-[#00e5ff] flex items-center gap-2"><span>🔮</span> Transfer Rumour Mill</h3>
+                <div class="space-y-4">
+                    @foreach($rumours as $rumour)
+                        <div class="p-3 bg-white/5 border border-white/5 rounded-lg space-y-2">
+                            <div class="flex items-center justify-between text-[8px] uppercase">
+                                <span class="font-extrabold px-1.5 py-0.5 rounded {{ $rumour['urgency'] === 'Breaking' ? 'bg-rose-500/10 text-rose-400' : 'bg-blue-500/10 text-blue-400' }}">{{ $rumour['urgency'] }}</span>
+                                <span class="font-semibold text-emerald-400">{{ $rumour['probability'] }}</span>
+                            </div>
+                            <p class="text-xs font-semibold leading-normal">"{{ $rumour['title'] }}"</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
 </div>

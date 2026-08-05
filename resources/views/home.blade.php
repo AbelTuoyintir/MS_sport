@@ -627,6 +627,36 @@
   <div class="reveal awards-grid" id="awards-grid"></div>
 </section>
 
+<!-- TRANSFER RUMOUR MILL -->
+<section class="py-12 sm:py-[70px] px-4 sm:px-6 md:px-10 bg-bg-dark border-t border-b border-border-dark" id="rumours">
+  <div class="reveal flex flex-wrap items-end justify-between gap-3 mb-6">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <div class="w-[14px] sm:w-[18px] h-[2px] bg-[#00e5ff]"></div>
+        <div class="font-heading text-[9px] sm:text-[10px] font-bold tracking-[2px] sm:tracking-[3px] text-[#00e5ff] uppercase">Transfer Rumour Mill</div>
+      </div>
+      <div class="font-display text-[clamp(28px,6vw,52px)] text-text-light leading-none">Latest League Gossip</div>
+      <p class="text-[11px] sm:text-xs text-muted max-w-[500px] mt-1.5 leading-relaxed">Simulated hot rumours, interest probability, and insider scouting updates from around the league.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @foreach($rumours as $rumour)
+      <div class="glass-card p-5 bg-gradient-to-br from-[#00e5ff]/5 to-transparent border border-white/5 rounded-xl hover:border-[#00e5ff]/20 transition-all duration-200">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-[8px] font-extrabold tracking-[1px] px-2 py-0.5 rounded uppercase {{ $rumour['urgency'] === 'Breaking' ? 'bg-rose-500/10 text-rose-400' : 'bg-[#00e5ff]/10 text-[#00e5ff]' }}">{{ $rumour['urgency'] }}</span>
+          <span class="text-[10px] font-semibold text-emerald-400">{{ $rumour['probability'] }}</span>
+        </div>
+        <p class="text-xs sm:text-sm font-semibold text-text-light mb-4 leading-normal">"{{ $rumour['title'] }}"</p>
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-live"></div>
+          <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Verified Source Update</span>
+        </div>
+      </div>
+    @endforeach
+  </div>
+</section>
+
 <!-- CTA SECTION -->
 <section class="py-16 sm:py-20 px-4 sm:px-6 md:px-10 bg-bg-dark text-center relative overflow-hidden">
   <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[400px] sm:h-[600px] bg-radial from-gold/6 to-transparent pointer-events-none"></div>

@@ -23,8 +23,49 @@ class TransferController extends Controller
             ->where('selling_team_id', auth()->user()->team_id)
             ->where('status', 'pending')
             ->get();
+        $rumours = $this->generateTransferRumours();
 
-        return view('transfers.index', compact('listings', 'incoming_offers'));
+        return view('transfers.index', compact('listings', 'incoming_offers', 'rumours'));
+    }
+
+    private function generateTransferRumours()
+    {
+        $players = Player::with('team')->orderBy('rating', 'desc')->take(30)->get();
+        $teams = \App\Models\Team::all();
+
+        $rumours = [];
+        if ($players->count() > 3 && $teams->count() > 1) {
+            $templates = [
+                "REVEALED: {team} are preparing an ambitious bid for {player}!",
+                "SCOUT REPORT: {team} scouts were spotted monitoring {player}'s performance.",
+                "TRANSFER TALK: {player} has emerged as a top target for {team}.",
+                "EXCL: {team} have opened initial talks to sign {player} next season.",
+                "EXCLUSIVE: {player} is reportedly considering options with {team} interested.",
+                "RUMOUR: {team} are ready to meet the valuation for {player}!"
+            ];
+
+            for ($i = 0; $i < 5; $i++) {
+                $player = $players->get(($i * 4) % $players->count());
+                $possibleTeams = $teams->filter(fn($t) => $t->id !== $player->team_id);
+                $team = $possibleTeams->isNotEmpty() ? $possibleTeams->values()->get($i % $possibleTeams->count()) : $teams->first();
+
+                $template = $templates[$i % count($templates)];
+                $title = str_replace(['{player}', '{team}'], [$player->name, $team->team_name], $template);
+
+                $rumours[] = [
+                    'title' => $title,
+                    'probability' => rand(40, 95) . '% probability',
+                    'urgency' => ['Hot', 'Developing', 'High Interest', 'Rumour', 'Breaking'][$i % 5]
+                ];
+            }
+        } else {
+            $rumours = [
+                ['title' => "TRANSFER TALK: Cape Coast Stars are monitoring top forward targets.", 'probability' => '65% probability', 'urgency' => 'Hot'],
+                ['title' => "REVEALED: Accra Lions prepare high-value offer for a premium playmaker.", 'probability' => '72% probability', 'urgency' => 'Developing'],
+                ['title' => "EXCL: Kumasi Warriors manager reveals plans for winter reinforcements.", 'probability' => '85% probability', 'urgency' => 'Breaking'],
+            ];
+        }
+        return $rumours;
     }
 
     public function listPlayer(Request $request)
