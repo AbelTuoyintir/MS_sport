@@ -112,6 +112,8 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/equipment', [TeamOperationsController::class, 'storeEquipment'])->name('manager.equipment.store');
     Route::get('/scouting', [TeamOperationsController::class, 'scoutingIndex'])->name('manager.scouting.index');
     Route::post('/scouting', [TeamOperationsController::class, 'storeScout'])->name('manager.scouting.store');
+    Route::get('/scouting/ai', [TeamOperationsController::class, 'scoutingAiIndex'])->name('manager.scouting.ai');
+    Route::post('/scouting/ai/generate', [TeamOperationsController::class, 'scoutingAiGenerate'])->name('manager.scouting.ai.generate');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('manager.reports.index');
