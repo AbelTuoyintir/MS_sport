@@ -7,6 +7,22 @@
         <button onclick="toggleModal('add-scout-modal')" class="bg-accent-gold text-bg-dark px-4 py-2 rounded-lg font-bold text-sm">+ Add Report</button>
     </div>
 
+    <!-- AI Assistant Banner -->
+    <div class="glass-card p-6 border border-accent-gold/20 bg-gradient-to-r from-yellow-500/10 to-transparent flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-accent-gold/20 flex items-center justify-center text-accent-gold shrink-0">
+                <i data-lucide="zap" class="w-6 h-6 text-accent-gold fill-accent-gold"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-heading font-black tracking-wide uppercase text-white">APEX AI Tactical Match Assistant</h3>
+                <p class="text-xs text-gray-300 font-medium">Generate automated, high-precision scouting reports and defensive strategies targeting any opposing team.</p>
+            </div>
+        </div>
+        <a href="{{ route('manager.scouting.ai') }}" class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-accent-gold text-bg-dark hover:bg-yellow-500 rounded-xl transition-all shadow-md flex items-center gap-1.5 self-start md:self-auto">
+            <span>Launch AI Assistant</span> <i data-lucide="sparkles" class="w-3.5 h-3.5 text-bg-dark fill-bg-dark"></i>
+        </a>
+    </div>
+
     @if(session('success'))
         <div class="p-3 bg-green-900/30 border border-green-800 text-green-400 text-sm rounded-lg">
             {{ session('success') }}
