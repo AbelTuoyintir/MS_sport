@@ -58,6 +58,7 @@
                             <a href="{{ route('manager.finance.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Finance</a>
                             <a href="{{ route('manager.equipment.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Equipment</a>
                             <a href="{{ route('manager.scouting.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Scouting</a>
+                            <a href="{{ route('manager.scouting.ai') }}" class="block px-4 py-3 text-sm text-accent-gold hover:text-white hover:bg-white/5 transition-colors font-bold">⭐ AI Scouting Assistant</a>
                             <a href="{{ route('manager.reports.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 border-t border-white/5 transition-colors">Reports</a>
                         </div>
                     </div>
@@ -79,6 +80,12 @@
 
     <script>
         lucide.createIcons();
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.toggle('hidden');
+            }
+        }
     </script>
 </body>
 </html>
