@@ -110,6 +110,7 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/finance', [TeamOperationsController::class, 'storeFinance'])->name('manager.finance.store');
     Route::get('/equipment', [TeamOperationsController::class, 'equipmentIndex'])->name('manager.equipment.index');
     Route::post('/equipment', [TeamOperationsController::class, 'storeEquipment'])->name('manager.equipment.store');
+    Route::get('/scouting/ai', [TeamOperationsController::class, 'aiScouting'])->name('manager.scouting.ai');
     Route::get('/scouting', [TeamOperationsController::class, 'scoutingIndex'])->name('manager.scouting.index');
     Route::post('/scouting', [TeamOperationsController::class, 'storeScout'])->name('manager.scouting.store');
 
