@@ -49,6 +49,9 @@
                     <a href="{{ route('manager.training.index') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('manager.training.index') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Training</a>
                     <a href="{{ route('manager.injuries.index') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('manager.injuries.index') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Injuries</a>
                     <a href="{{ route('manager.transfers.index') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('manager.transfers.index') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Transfers</a>
+                    <a href="{{ route('manager.scouting.ai') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('manager.scouting.ai') ? 'text-accent-gold' : 'text-cyan-400 hover:text-cyan-300' }}">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI Scouting
+                    </a>
 
                     <div class="relative group">
                         <button class="text-sm font-bold uppercase tracking-wider text-gray-400 group-hover:text-white flex items-center gap-1">
@@ -57,7 +60,8 @@
                         <div class="absolute top-full left-0 mt-2 w-48 glass-card border border-white/10 hidden group-hover:block z-50 overflow-hidden">
                             <a href="{{ route('manager.finance.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Finance</a>
                             <a href="{{ route('manager.equipment.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Equipment</a>
-                            <a href="{{ route('manager.scouting.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Scouting</a>
+                            <a href="{{ route('manager.scouting.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Scouting Reports</a>
+                            <a href="{{ route('manager.scouting.ai') }}" class="block px-4 py-3 text-sm text-cyan-400 hover:text-cyan-300 hover:bg-white/5 transition-colors">AI Intelligence</a>
                             <a href="{{ route('manager.reports.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 border-t border-white/5 transition-colors">Reports</a>
                         </div>
                     </div>
