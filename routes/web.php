@@ -41,6 +41,9 @@ Route::get('/players/{id}', [PlayerController::class, 'showPublic'])->name('play
 Route::get('/matches/{id}', [HomeController::class, 'matchDetails'])->name('matches.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/stats', [\App\Http\Controllers\StatsController::class, 'index'])->name('stats');
+Route::get('/predictor', [\App\Http\Controllers\MatchPredictorController::class, 'index'])->name('predictor');
+Route::get('/lineup-builder', [\App\Http\Controllers\LineupBuilderController::class, 'index'])->name('lineup-builder');
+Route::get('/injuries-discipline', [\App\Http\Controllers\DisciplineInjuryController::class, 'index'])->name('injuries-discipline');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
