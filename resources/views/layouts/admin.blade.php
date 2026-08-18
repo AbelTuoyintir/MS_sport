@@ -47,6 +47,9 @@
                         <a href="{{ route('admin.games.index') }}" class="text-sm font-semibold {{ request()->routeIs('admin.games.*') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Matches</a>
                         <a href="{{ route('admin.articles.index') }}" class="text-sm font-semibold {{ request()->routeIs('admin.articles.*') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">News</a>
                         <a href="{{ route('admin.payments') }}" class="text-sm font-semibold {{ request()->routeIs('admin.payments') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }} transition-colors">Payments</a>
+                        <a href="{{ route('tournaments.index') }}" class="text-sm font-semibold {{ request()->routeIs('tournaments.index') ? 'text-accent-gold' : 'text-amber-400 hover:text-amber-300' }} transition-colors flex items-center gap-1">
+                            <i data-lucide="trophy" class="w-3.5 h-3.5"></i> Cup Brackets
+                        </a>
                     </div>
                 </div>
                 <div class="flex items-center gap-6">
