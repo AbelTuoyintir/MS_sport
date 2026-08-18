@@ -44,6 +44,8 @@ Route::get('/stats', [\App\Http\Controllers\StatsController::class, 'index'])->n
 Route::get('/predictor', [\App\Http\Controllers\MatchPredictorController::class, 'index'])->name('predictor');
 Route::get('/lineup-builder', [\App\Http\Controllers\LineupBuilderController::class, 'index'])->name('lineup-builder');
 Route::get('/injuries-discipline', [\App\Http\Controllers\DisciplineInjuryController::class, 'index'])->name('injuries-discipline');
+Route::get('/tournaments', [\App\Http\Controllers\TournamentController::class, 'index'])->name('tournaments.index');
+Route::post('/tournaments/predict', [\App\Http\Controllers\TournamentController::class, 'predict'])->name('tournaments.predict');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');

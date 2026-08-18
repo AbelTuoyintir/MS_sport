@@ -58,6 +58,9 @@
                     <a href="{{ route('manager.scouting.ai') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('manager.scouting.ai') ? 'text-accent-gold' : 'text-cyan-400 hover:text-cyan-300' }}">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> AI Scouting
                     </a>
+                    <a href="{{ route('tournaments.index') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('tournaments.index') ? 'text-accent-gold' : 'text-amber-400 hover:text-amber-300' }}">
+                        <i data-lucide="trophy" class="w-3.5 h-3.5"></i> Cup Brackets
+                    </a>
 
                     <div class="relative group">
                         <button class="text-sm font-bold uppercase tracking-wider text-gray-400 group-hover:text-white flex items-center gap-1">
