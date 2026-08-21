@@ -9,26 +9,27 @@ class TournamentHubTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_tournament_hub_is_accessible_and_renders_bracket()
+    public function test_tournaments_page_is_accessible_and_renders_bracket(): void
     {
-        $response = $this->get(route('tournaments.index'));
+        $response = $this->get('/tournaments');
 
         $response->assertStatus(200);
-        $response->assertSee('Apex Champions Cup');
+        $response->assertSee('The Apex Champions Cup');
+        $response->assertSee('Fan Bracket Challenge');
         $response->assertSee('Quarter-Finals');
         $response->assertSee('Semi-Finals');
-        $response->assertSee('The Grand Final');
-        $response->assertSee('Fan Bracket Prediction Challenge');
     }
 
-    public function test_fan_can_submit_bracket_prediction()
+    public function test_fan_can_submit_bracket_prediction(): void
     {
-        $response = $this->post(route('tournaments.predict'), [
-            'user_name' => 'John Fan',
-            'predicted_champion' => 'Man City',
+        $response = $this->post('/tournaments/predict', [
+            'fan_name' => 'John Fan',
+            'predicted_winner_id' => 'Man City',
+            'predicted_final_score' => '2 - 1',
         ]);
 
         $response->assertRedirect();
-        $response->assertSessionHas('success');
+        $response->assertSessionHas('tournament_prediction');
+        $response->assertSessionHas('success', 'Your Apex Champions Cup bracket prediction has been locked in!');
     }
 }

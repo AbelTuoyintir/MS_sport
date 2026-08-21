@@ -8,122 +8,68 @@ use Illuminate\Http\Request;
 
 class TournamentController extends Controller
 {
-    /**
-     * Display the Apex Champions Cup Tournament Hub.
-     */
     public function index()
     {
         $teams = Team::all();
 
-        // If less than 8 teams exist, provide fallback team objects
-        if ($teams->count() < 8) {
-            $fallbackNames = ['Man City', 'Arsenal', 'Liverpool', 'Aston Villa', 'Tottenham', 'Chelsea', 'Newcastle', 'Real Madrid'];
-            $teams = collect();
-            foreach ($fallbackNames as $idx => $name) {
-                $t = new Team();
-                $t->id = $idx + 1;
-                $t->team_name = $name;
-                $t->primary_color = ['#1a3cff', '#ef0107', '#d00027', '#6c1d45', '#132257', '#034694', '#241f20', '#e21a23'][$idx];
-                $teams->push($t);
-            }
+        // Standard knockout cup structure for the Apex Champions Cup
+        if ($teams->count() >= 8) {
+            $bracketTeams = $teams->take(8)->values();
+        } else {
+            // Seeded/fallback default cup teams
+            $bracketTeams = collect([
+                ['id' => 1, 'team_name' => 'Man City', 'primary_color' => '#1a3cff'],
+                ['id' => 2, 'team_name' => 'Arsenal', 'primary_color' => '#ef0107'],
+                ['id' => 3, 'team_name' => 'Liverpool', 'primary_color' => '#d00027'],
+                ['id' => 4, 'team_name' => 'Aston Villa', 'primary_color' => '#6c1d45'],
+                ['id' => 5, 'team_name' => 'Tottenham', 'primary_color' => '#132257'],
+                ['id' => 6, 'team_name' => 'Chelsea', 'primary_color' => '#034694'],
+                ['id' => 7, 'team_name' => 'Newcastle', 'primary_color' => '#241f20'],
+                ['id' => 8, 'team_name' => 'Man Utd', 'primary_color' => '#e21a23'],
+            ]);
         }
 
-        $top8 = $teams->take(8)->values();
-
-        // Quarter Final Pairings (4 matches)
-        $qf = [
-            [
-                'id' => 'qf1',
-                'home' => $top8[0] ?? null,
-                'away' => $top8[1] ?? null,
-                'score' => '2 – 1',
-                'winner' => $top8[0]->team_name ?? 'Team A',
-                'status' => 'Finished',
-                'date' => 'Apr 12, 2025'
-            ],
-            [
-                'id' => 'qf2',
-                'home' => $top8[2] ?? null,
-                'away' => $top8[3] ?? null,
-                'score' => '3 – 2',
-                'winner' => $top8[2]->team_name ?? 'Team C',
-                'status' => 'Finished',
-                'date' => 'Apr 12, 2025'
-            ],
-            [
-                'id' => 'qf3',
-                'home' => $top8[4] ?? null,
-                'away' => $top8[5] ?? null,
-                'score' => '1 – 0',
-                'winner' => $top8[4]->team_name ?? 'Team E',
-                'status' => 'Finished',
-                'date' => 'Apr 13, 2025'
-            ],
-            [
-                'id' => 'qf4',
-                'home' => $top8[6] ?? null,
-                'away' => $top8[7] ?? null,
-                'score' => '2 – 2 (4-3 p)',
-                'winner' => $top8[6]->team_name ?? 'Team G',
-                'status' => 'Finished',
-                'date' => 'Apr 13, 2025'
-            ],
+        $quarterFinals = [
+            ['id' => 'qf1', 'home' => $bracketTeams[0], 'away' => $bracketTeams[7], 'home_score' => 3, 'away_score' => 1, 'status' => 'Finished', 'winner_id' => $bracketTeams[0]['id'] ?? 1],
+            ['id' => 'qf2', 'home' => $bracketTeams[1], 'away' => $bracketTeams[6], 'home_score' => 2, 'away_score' => 0, 'status' => 'Finished', 'winner_id' => $bracketTeams[1]['id'] ?? 2],
+            ['id' => 'qf3', 'home' => $bracketTeams[2], 'away' => $bracketTeams[5], 'home_score' => 4, 'away_score' => 2, 'status' => 'Finished', 'winner_id' => $bracketTeams[2]['id'] ?? 3],
+            ['id' => 'qf4', 'home' => $bracketTeams[3], 'away' => $bracketTeams[4], 'home_score' => 1, 'away_score' => 2, 'status' => 'Finished', 'winner_id' => $bracketTeams[4]['id'] ?? 5],
         ];
 
-        // Semi Final Pairings (2 matches)
-        $sf = [
-            [
-                'id' => 'sf1',
-                'home_name' => $qf[0]['winner'],
-                'away_name' => $qf[1]['winner'],
-                'score' => '1 – 2',
-                'winner' => $qf[1]['winner'],
-                'status' => 'Finished',
-                'date' => 'Apr 26, 2025'
-            ],
-            [
-                'id' => 'sf2',
-                'home_name' => $qf[2]['winner'],
-                'away_name' => $qf[3]['winner'],
-                'score' => '3 – 1',
-                'winner' => $qf[2]['winner'],
-                'status' => 'Finished',
-                'date' => 'Apr 27, 2025'
-            ],
+        $semiFinals = [
+            ['id' => 'sf1', 'home' => $bracketTeams[0], 'away' => $bracketTeams[1], 'home_score' => 2, 'away_score' => 1, 'status' => 'Finished', 'winner_id' => $bracketTeams[0]['id'] ?? 1],
+            ['id' => 'sf2', 'home' => $bracketTeams[2], 'away' => $bracketTeams[4], 'home_score' => 3, 'away_score' => 2, 'status' => 'Finished', 'winner_id' => $bracketTeams[2]['id'] ?? 3],
         ];
 
-        // Final Match
         $final = [
-            'id' => 'f1',
-            'home_name' => $sf[0]['winner'],
-            'away_name' => $sf[1]['winner'],
-            'score' => 'vs',
-            'winner' => null,
-            'status' => 'UPCOMING',
-            'date' => 'May 18, 2025 · Wembley Stadium'
+            ['id' => 'fn1', 'home' => $bracketTeams[0], 'away' => $bracketTeams[2], 'home_score' => null, 'away_score' => null, 'status' => 'Upcoming (May 24)', 'winner_id' => null],
         ];
 
-        // Cup Stats
-        $stats = [
-            'total_goals' => 14,
-            'avg_goals_per_game' => 2.33,
-            'favorite_team' => $top8[0]->team_name ?? 'Man City',
-            'clean_sheets' => 2,
-        ];
+        $savedPrediction = session('tournament_prediction');
 
-        return view('tournaments.index', compact('teams', 'qf', 'sf', 'final', 'stats'));
+        return view('tournaments.index', compact('teams', 'bracketTeams', 'quarterFinals', 'semiFinals', 'final', 'savedPrediction'));
     }
 
-    /**
-     * Submit a bracket prediction for the cup.
-     */
     public function predictBracket(Request $request)
     {
-        $validated = $request->validate([
-            'user_name' => 'required|string|max:255',
-            'predicted_champion' => 'required|string|max:255',
+        $request->validate([
+            'fan_name' => 'required|string|max:255',
+            'predicted_winner_id' => 'required',
+            'predicted_final_score' => 'required|string|max:20',
         ]);
 
-        return redirect()->back()->with('success', '🏆 Bracket prediction submitted successfully! Good luck, ' . e($validated['user_name']) . '!');
+        $team = Team::find($request->predicted_winner_id);
+        $winnerName = $team ? $team->team_name : $request->predicted_winner_id;
+
+        $prediction = [
+            'fan_name' => $request->fan_name,
+            'predicted_winner' => $winnerName,
+            'predicted_score' => $request->predicted_final_score,
+            'submitted_at' => now()->toDayDateTimeString(),
+        ];
+
+        session(['tournament_prediction' => $prediction]);
+
+        return redirect()->back()->with('success', 'Your Apex Champions Cup bracket prediction has been locked in!');
     }
 }
