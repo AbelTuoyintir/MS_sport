@@ -89,6 +89,12 @@
 
     <script>
         lucide.createIcons();
+        function toggleModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.toggle('hidden');
+            }
+        }
     </script>
 </body>
 </html>
