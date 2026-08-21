@@ -1,373 +1,215 @@
 @extends('layouts.admin')
+
 @section('content')
-    <style>
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1e2530;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #f0c040;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: #c8930a;
-        }
-        
-        /* Hover effects */
-        .stat-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.3);
-        }
-        
-        .table-row {
-            transition: background-color 0.2s ease;
-        }
-        
-        .table-row:hover {
-            background-color: rgba(240, 192, 64, 0.05);
-        }
-        
-        .action-btn {
-            transition: all 0.2s ease;
-        }
-        
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(135deg, #f0c040 0%, #fff0a0 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        /* Border gradient animation */
-        @keyframes borderGlow {
-            0%, 100% {
-                border-color: rgba(240, 192, 64, 0.2);
-            }
-            50% {
-                border-color: rgba(240, 192, 64, 0.5);
-            }
-        }
-        
-        .stat-card {
-            animation: borderGlow 2s ease-in-out infinite;
-        }
-    </style>
-<div class="font-sans antialiased">
-
-    <div class="min-h-screen p-4 md:p-6 lg:p-8">
-        
-        <!-- Main Container -->
-        <div class="max-w-7xl mx-auto">
-            
-            <!-- Header Section -->
-            <div class="mb-8">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight">
-                            Dashboard
-                        </h1>
-                        <p class="text-gray-400 text-sm md:text-base mt-1">
-                            Season 2024/25 - Matchweek 32
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <!-- Date display -->
-                        <div class="flex items-center gap-2 bg-white/5 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/10">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span class="text-gray-300 text-sm">April 2025</span>
-                        </div>
-                        <!-- Refresh button -->
-                        <button class="bg-white/5 hover:bg-white/10 transition-all duration-200 p-2 rounded-lg border border-white/10">
-                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+<div class="space-y-8">
+    <!-- Header Banner -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-bg-dark3 via-bg-dark2 to-bg-dark3 p-6 rounded-2xl border border-border-dark shadow-xl">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="w-2 h-2 rounded-full bg-gold"></span>
+                <span class="text-xs font-heading font-bold uppercase tracking-widest text-gold">Season 2024/25 Overview</span>
             </div>
+            <h1 class="text-3xl font-display tracking-tight text-white">Administrator Control Dashboard</h1>
+            <p class="text-xs text-muted mt-1">Real-time statistics, top scorers, and management shortcuts for CAPE COAST, UCC Premier Division.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.teams.create') }}" class="px-4 py-2 bg-gold hover:bg-gold3 text-black font-heading font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center gap-2">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add New Team
+            </a>
+            <a href="{{ route('admin.games.create') }}" class="px-4 py-2 bg-bg-dark4 hover:bg-border-dark text-white border border-border-dark font-heading font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-2">
+                <i data-lucide="calendar-plus" class="w-4 h-4 text-accent"></i> Schedule Match
+            </a>
+        </div>
+    </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-                
-                <!-- Total Teams Card -->
-                <div class="stat-card bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-[#f0c040]/20 p-5 md:p-6 backdrop-blur-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-10 h-10 bg-[#f0c040]/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-[#f0c040]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Total</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_teams'] }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-gray-400">0 changes this season</span>
-                        <span class="text-[10px] text-gray-500">⚽</span>
-                    </div>
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Teams Card -->
+        <div class="glass-card p-6 relative overflow-hidden group hover:border-gold/40 transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center text-gold">
+                    <i data-lucide="shield" class="w-6 h-6"></i>
                 </div>
-
-                <!-- Registered Players Card -->
-                <div class="stat-card bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-[#f0c040]/20 p-5 md:p-6 backdrop-blur-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-10 h-10 bg-[#22c55e]/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Players</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_players'] }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
-                        <span class="text-xs text-gray-400">this month</span>
-                    </div>
-                </div>
-
-                <!-- Matches Played Card -->
-                <div class="stat-card bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-[#f0c040]/20 p-5 md:p-6 backdrop-blur-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-10 h-10 bg-[#00e5ff]/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-[#00e5ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Matches</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_matches'] }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
-                        <span class="text-xs text-gray-400">this week</span>
-                    </div>
-                </div>
-
-                <!-- Goals Scored Card -->
-                <div class="stat-card bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-[#f0c040]/20 p-5 md:p-6 backdrop-blur-sm">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="w-10 h-10 bg-[#ff3b3b]/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-[#ff3b3b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-[10px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-1 rounded">Goals</span>
-                    </div>
-                    <div class="mb-2">
-                        <span class="text-3xl md:text-4xl font-bold text-white">{{ $stats['total_goals'] }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-3 h-3 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                        </svg>
-                        <span class="text-xs text-[#22c55e] font-semibold">▲ 0</span>
-                        <span class="text-xs text-gray-400">this week</span>
-                    </div>
-                </div>
+                <span class="text-[10px] font-bold text-muted uppercase tracking-widest bg-bg-dark4 px-2 py-1 rounded-md">Total Teams</span>
             </div>
+            <div class="text-4xl font-display text-white mb-1">{{ $stats['total_teams'] }}</div>
+            <div class="flex items-center gap-1 text-xs text-muted">
+                <span class="text-custom-green font-bold">● Active</span>
+                <span>registered clubs</span>
+            </div>
+        </div>
 
-            <!-- Bottom Section: Table and Quick Actions -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                
-                <!-- Top Scorers Table -->
-                <div class="lg:col-span-2">
-                    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-white/10 overflow-hidden backdrop-blur-sm">
-                        <!-- Table Header -->
-                        <div class="px-5 md:px-6 py-4 border-b border-white/10">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h2 class="text-lg md:text-xl font-bold text-white">Top Scorers</h2>
-                                    <p class="text-xs text-gray-400 mt-1">Leading goal scorers this season</p>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <button class="text-xs text-[#f0c040] hover:text-[#fff0a0] transition-colors font-semibold">
-                                        View All →
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Table -->
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="border-b border-white/10 bg-white/5">
-                                        <th class="text-left px-5 md:px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Player</th>
-                                        <th class="text-left px-5 md:px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Team</th>
-                                        <th class="text-center px-5 md:px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Matches Played</th>
-                                        <th class="text-center px-5 md:px-6 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">Goals Scored</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($top_scorers as $player)
-                                    <tr class="table-row border-b border-white/5 cursor-pointer">
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-3">
-                                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#f0c040] to-[#c8930a] flex items-center justify-center text-black font-bold text-xs">
-                                                    {{ strtoupper(substr($player->name, 0, 2)) }}
-                                                </div>
-                                                <div>
-                                                    <span class="font-semibold text-white text-sm">{{ $player->name }}</span>
-                                                    <span class="block text-xs text-gray-500">{{ $player->position }}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold" style="background-color: {{ $player->team->primary_color ?? '#ccc' }}">
-                                                    {{ strtoupper(substr($player->team->team_name ?? 'NA', 0, 2)) }}
-                                                </div>
-                                                <span class="text-gray-300 text-sm">{{ $player->team->team_name ?? 'N/A' }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <span class="text-white font-medium">-</span>
-                                        </td>
-                                        <td class="px-5 md:px-6 py-3 text-center">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span class="text-[#f0c040] font-bold text-lg">{{ $player->goals }}</span>
-                                                <span class="text-xs text-gray-500">⚽</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    @empty
-                                    <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-gray-500 text-sm">No scorers recorded yet.</td>
-                                    </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!-- Table Footer -->
-                        <div class="px-5 md:px-6 py-3 border-t border-white/10 bg-white/5">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="text-gray-400">Showing 5 of 20 players</span>
-                                <div class="flex gap-2">
-                                    <button class="px-2 py-1 rounded bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">←</button>
-                                    <button class="px-2 py-1 rounded bg-[#f0c040]/20 text-[#f0c040] font-semibold">1</button>
-                                    <button class="px-2 py-1 rounded bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">2</button>
-                                    <button class="px-2 py-1 rounded bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">3</button>
-                                    <button class="px-2 py-1 rounded bg-white/5 text-gray-400 hover:bg-white/10 transition-colors">→</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Players Card -->
+        <div class="glass-card p-6 relative overflow-hidden group hover:border-custom-green/40 transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-custom-green/10 border border-custom-green/20 flex items-center justify-center text-custom-green">
+                    <i data-lucide="users" class="w-6 h-6"></i>
                 </div>
+                <span class="text-[10px] font-bold text-muted uppercase tracking-widest bg-bg-dark4 px-2 py-1 rounded-md">Squad Roster</span>
+            </div>
+            <div class="text-4xl font-display text-white mb-1">{{ $stats['total_players'] }}</div>
+            <div class="flex items-center gap-1 text-xs text-muted">
+                <span class="text-custom-green font-bold">▲ Registered</span>
+                <span>league athletes</span>
+            </div>
+        </div>
 
-                <!-- Quick Actions Panel -->
-                <div class="lg:col-span-1">
-                    <div class="bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-white/10 overflow-hidden backdrop-blur-sm">
-                        <div class="px-5 md:px-6 py-4 border-b border-white/10">
-                            <h2 class="text-lg md:text-xl font-bold text-white">Quick Actions</h2>
-                            <p class="text-xs text-gray-400 mt-1">Manage your league</p>
-                        </div>
-                        <div class="p-5 md:p-6 space-y-4">
-                            <!-- Add Team Button -->
-                            <a href="{{ route('admin.teams.create') }}" class="action-btn w-full bg-gradient-to-r from-[#f0c040] to-[#c8930a] hover:from-[#fff0a0] hover:to-[#f0c040] text-black font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                                <span class="text-sm uppercase tracking-wide">Add Team</span>
-                            </a>
-                            
-                            <!-- Add Player Button -->
-                            <button class="action-btn w-full bg-gradient-to-r from-[#00e5ff] to-[#007fa8] hover:from-[#4deaff] hover:to-[#00e5ff] text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 shadow-lg hover:shadow-xl opacity-60 cursor-not-allowed">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                                </svg>
-                                <span class="text-sm uppercase tracking-wide">Add Player (Manager Only)</span>
-                            </button>
-
-                            <!-- Divider -->
-                            <div class="relative my-4">
-                                <div class="absolute inset-0 flex items-center">
-                                    <div class="w-full border-t border-white/10"></div>
-                                </div>
-                                <div class="relative flex justify-center text-xs">
-                                    <span class="px-2 bg-[#0d1117] text-gray-500">Other Actions</span>
-                                </div>
-                            </div>
-
-                            <!-- Export Data Button -->
-                            <button class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                                </svg>
-                                <span class="text-xs uppercase tracking-wide">Export Data</span>
-                            </button>
-
-                            <!-- Schedule Match Button -->
-                            <a href="{{ route('admin.games.create') }}" class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-xs uppercase tracking-wide">Schedule Match</span>
-                            </a>
-
-                            <!-- Generate Report Button -->
-                            <button class="action-btn w-full bg-white/5 hover:bg-white/10 text-gray-300 font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center gap-3 transition-all duration-200 border border-white/10">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                                <span class="text-xs uppercase tracking-wide">Generate Report</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity Card -->
-                    <div class="mt-6 bg-gradient-to-br from-[#0d1117] to-[#161b24] rounded-xl border border-white/10 p-5 backdrop-blur-sm">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-sm font-bold text-white">Recent Activity</h3>
-                            <span class="text-[10px] text-gray-500">Last 7 days</span>
-                        </div>
-                        <div class="space-y-3">
-                            @forelse($recent_activities as $activity)
-                            <div class="flex items-start gap-3">
-                                <div class="w-1.5 h-1.5 rounded-full mt-1.5" style="background-color: {{ $activity->color }}"></div>
-                                <div>
-                                    <p class="text-xs text-gray-300">{!! $activity->message !!}</p>
-                                    <p class="text-[10px] text-gray-600">{{ $activity->time }}</p>
-                                </div>
-                            </div>
-                            @empty
-                            <p class="text-xs text-gray-500">No recent activity.</p>
-                            @endforelse
-                        </div>
-                    </div>
+        <!-- Matches Card -->
+        <div class="glass-card p-6 relative overflow-hidden group hover:border-accent/40 transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
+                    <i data-lucide="trophy" class="w-6 h-6"></i>
                 </div>
+                <span class="text-[10px] font-bold text-muted uppercase tracking-widest bg-bg-dark4 px-2 py-1 rounded-md">Matches</span>
+            </div>
+            <div class="text-4xl font-display text-white mb-1">{{ $stats['total_matches'] }}</div>
+            <div class="flex items-center gap-1 text-xs text-muted">
+                <span class="text-accent font-bold">● Scheduled</span>
+                <span>& completed games</span>
+            </div>
+        </div>
+
+        <!-- Goals Card -->
+        <div class="glass-card p-6 relative overflow-hidden group hover:border-custom-red/40 transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 rounded-xl bg-custom-red/10 border border-custom-red/20 flex items-center justify-center text-custom-red">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+                <span class="text-[10px] font-bold text-muted uppercase tracking-widest bg-bg-dark4 px-2 py-1 rounded-md">Goals Scored</span>
+            </div>
+            <div class="text-4xl font-display text-white mb-1">{{ $stats['total_goals'] }}</div>
+            <div class="flex items-center gap-1 text-xs text-muted">
+                <span class="text-custom-red font-bold">⚽ Total</span>
+                <span>netted this season</span>
             </div>
         </div>
     </div>
+
+    <!-- Main Content Split: Top Scorers & Operations Side Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Top Scorers Table (2 cols) -->
+        <div class="lg:col-span-2 space-y-4">
+            <div class="flex items-center justify-between border-b border-border-dark pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="flame" class="w-5 h-5 text-gold"></i>
+                    <h2 class="text-xl font-heading font-bold uppercase tracking-wider text-white">League Golden Boot Race</h2>
+                </div>
+                <a href="{{ route('admin.teams.index') }}" class="text-xs text-gold hover:underline font-bold uppercase tracking-wider">
+                    Manage Roster →
+                </a>
+            </div>
+
+            <div class="glass-card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-border-dark text-[10px] font-heading font-bold uppercase tracking-widest text-muted bg-bg-dark3/50">
+                                <th class="py-3 px-4">Player</th>
+                                <th class="py-3 px-4">Team</th>
+                                <th class="py-3 px-4 text-center">Position</th>
+                                <th class="py-3 px-4 text-right">Goals</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border-dark/50 text-xs">
+                            @forelse($top_scorers as $player)
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td class="py-3.5 px-4 font-bold text-text-light">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold2 flex items-center justify-center text-black font-extrabold text-xs">
+                                                {{ strtoupper(substr($player->name, 0, 2)) }}
+                                            </div>
+                                            <div>
+                                                <div class="font-bold text-white">{{ $player->name }}</div>
+                                                <div class="text-[10px] text-muted">{{ $player->nationality ?? 'Ghana' }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-muted">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black text-white" style="background-color: {{ $player->team->primary_color ?? '#f0c040' }}">
+                                                {{ strtoupper(substr($player->team->team_name ?? 'NA', 0, 2)) }}
+                                            </div>
+                                            <span>{{ $player->team->team_name ?? 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4 text-center font-mono text-accent">
+                                        {{ $player->position ?? 'ST' }}
+                                    </td>
+                                    <td class="py-3.5 px-4 text-right font-display text-2xl text-gold">
+                                        {{ $player->goals }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="p-8 text-center text-muted">
+                                        No top scorers recorded yet for Season 2024/25.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Recent Activity (1 col) -->
+        <div class="space-y-6">
+            <!-- Quick Management Panel -->
+            <div class="glass-card p-6 space-y-4">
+                <h3 class="text-sm font-heading font-bold uppercase tracking-wider text-white border-b border-border-dark pb-2 flex items-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4 text-accent"></i> Quick Administrative Tools
+                </h3>
+                <div class="grid grid-cols-1 gap-2.5">
+                    <a href="{{ route('admin.teams.create') }}" class="p-3 bg-bg-dark3 hover:bg-bg-dark4 border border-border-dark hover:border-gold/40 rounded-xl transition-all flex items-center justify-between group no-underline">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="shield-plus" class="w-4 h-4 text-gold"></i>
+                            <span class="text-xs font-bold text-text-light uppercase tracking-wider">Register Team</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-muted group-hover:text-gold transition-colors"></i>
+                    </a>
+
+                    <a href="{{ route('admin.games.create') }}" class="p-3 bg-bg-dark3 hover:bg-bg-dark4 border border-border-dark hover:border-accent/40 rounded-xl transition-all flex items-center justify-between group no-underline">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="calendar-plus" class="w-4 h-4 text-accent"></i>
+                            <span class="text-xs font-bold text-text-light uppercase tracking-wider">Schedule Fixture</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-muted group-hover:text-accent transition-colors"></i>
+                    </a>
+
+                    <a href="{{ route('admin.articles.create') }}" class="p-3 bg-bg-dark3 hover:bg-bg-dark4 border border-border-dark hover:border-custom-green/40 rounded-xl transition-all flex items-center justify-between group no-underline">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="newspaper" class="w-4 h-4 text-custom-green"></i>
+                            <span class="text-xs font-bold text-text-light uppercase tracking-wider">Publish League News</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-muted group-hover:text-custom-green transition-colors"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent System Activity -->
+            <div class="glass-card p-6 space-y-4">
+                <h3 class="text-sm font-heading font-bold uppercase tracking-wider text-white border-b border-border-dark pb-2 flex items-center justify-between">
+                    <span class="flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-gold"></i> System Feed</span>
+                    <span class="text-[10px] text-muted lowercase">live log</span>
+                </h3>
+
+                <div class="space-y-3">
+                    @forelse($recent_activities as $activity)
+                        <div class="flex items-start gap-3 text-xs">
+                            <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style="background-color: {{ $activity->color }}"></div>
+                            <div>
+                                <p class="text-text-light font-medium">{!! $activity->message !!}</p>
+                                <p class="text-[10px] text-muted mt-0.5">{{ $activity->time }}</p>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-xs text-muted text-center py-4">No recent activities logged.</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 @endsection
-
