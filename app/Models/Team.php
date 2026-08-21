@@ -30,6 +30,11 @@ class Team extends Model
         'starting_xi' => 'array',
     ];
 
+    public function getNameAttribute()
+    {
+        return $this->attributes['team_name'] ?? $this->attributes['name'] ?? '';
+    }
+
     public function owners()
     {
         return $this->hasMany(Owner::class);
