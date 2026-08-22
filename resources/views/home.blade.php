@@ -218,12 +218,15 @@
     </div>
     <div class="flex flex-col gap-2">
       <a href="#standings" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Standings</a>
-      <a href="{{ route('predictions.leaderboard') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Leaderboard</a>
+      <a href="{{ route('stats') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Stats</a>
+      <a href="{{ route('players.compare') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Compare Players</a>
+      <a href="{{ route('predictor') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">xG Predictor</a>
+      <a href="{{ route('lineup-builder') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Lineup Builder</a>
+      <a href="{{ route('injuries-discipline') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Medical Hub</a>
       <a href="{{ route('tournaments.index') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-gold px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Apex Cup</a>
+      <a href="{{ route('predictions.leaderboard') }}" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Leaderboard</a>
       <a href="#matches" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Matches</a>
       <a href="#news" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">News</a>
-      <a href="#awards" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Awards</a>
-      <a href="#clubs" class="mobile-nav-link font-heading text-base font-semibold tracking-[0.8px] uppercase text-muted px-3 py-2.5 rounded-md transition-all duration-150 no-underline hover:text-text-light hover:bg-bg-dark3">Clubs</a>
     </div>
     <div class="mt-6 pt-6 border-t border-border-dark">
       <button class="w-full font-heading text-sm font-bold tracking-[0.5px] px-4 py-2.5 rounded-md transition-all duration-150 bg-transparent text-muted border border-border-dark2 hover:text-text-light hover:border-text-light uppercase mb-3">Sign In</button>
@@ -245,17 +248,17 @@
   </a>
   
   <!-- Desktop Navigation -->
-  <div class="hidden md:flex items-center gap-0 ml-9">
-      <a href="{{ route('search') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Search</a>
-    <a href="#standings" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Standings</a>
-    <a href="{{ route('stats') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Stats</a>
-    <a href="{{ route('tournaments.index') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-accent font-bold px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Apex Cup</a>
-    <a href="{{ route('predictions.leaderboard') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Leaderboard</a>
-    <a href="{{ route('tournaments.index') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-gold px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Apex Cup</a>
-    <a href="#matches" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Matches</a>
-    <a href="#news" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">News</a>
-    <a href="#awards" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Awards</a>
-    <a href="#clubs" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-3 py-1.5 rounded-md transition-all duration-150 no-underline border-b-2 border-transparent hover:text-text-light">Clubs</a>
+  <div class="hidden lg:flex items-center gap-0 ml-6">
+    <a href="{{ route('search') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Search</a>
+    <a href="#standings" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Standings</a>
+    <a href="{{ route('stats') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Stats</a>
+    <a href="{{ route('players.compare') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Compare</a>
+    <a href="{{ route('predictor') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Predictor</a>
+    <a href="{{ route('lineup-builder') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Lineup</a>
+    <a href="{{ route('tournaments.index') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-gold font-bold px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Apex Cup</a>
+    <a href="{{ route('predictions.leaderboard') }}" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Leaderboard</a>
+    <a href="#matches" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">Matches</a>
+    <a href="#news" class="nav-link font-heading text-xs font-semibold tracking-[0.8px] uppercase text-muted px-2.5 py-1.5 rounded-md transition-all duration-150 no-underline hover:text-text-light">News</a>
   </div>
   
   <div class="flex items-center gap-2">
