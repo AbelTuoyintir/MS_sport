@@ -20,6 +20,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TournamentController;
+use App\Http\Controllers\ClubRankingController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -45,6 +46,7 @@ Route::get('/stats', [\App\Http\Controllers\StatsController::class, 'index'])->n
 Route::get('/predictor', [\App\Http\Controllers\MatchPredictorController::class, 'index'])->name('predictor');
 Route::get('/lineup-builder', [\App\Http\Controllers\LineupBuilderController::class, 'index'])->name('lineup-builder');
 Route::get('/injuries-discipline', [\App\Http\Controllers\DisciplineInjuryController::class, 'index'])->name('injuries-discipline');
+Route::get('/rankings', [ClubRankingController::class, 'index'])->name('rankings');
 Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
 Route::post('/tournaments/predict', [TournamentController::class, 'predictBracket'])->name('tournaments.predict');
 
