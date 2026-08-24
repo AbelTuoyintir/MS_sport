@@ -199,14 +199,17 @@
                 <!-- Commentary Console -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Live Commentary Log</span>
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Live Commentary Log & Audio FX</span>
                         <div class="flex items-center gap-2">
+                            <button type="button" id="sim-audio-btn" onclick="toggleAudioFX()" class="text-xs bg-amber-500/15 text-amber-400 hover:bg-amber-500/25 transition-all px-2.5 py-1 rounded font-bold flex items-center gap-1">
+                                🔊 Sound: ON
+                            </button>
                             <button type="button" id="sim-pause-btn" onclick="toggleSimPause()" class="text-xs bg-white/10 hover:bg-white/20 transition-all px-2.5 py-1 rounded font-bold">Pause</button>
                             <button type="button" id="sim-speed-btn" onclick="toggleSimSpeed()" class="text-xs bg-[#00e5ff]/15 text-[#00e5ff] hover:bg-[#00e5ff]/25 transition-all px-2.5 py-1 rounded font-bold">1x Speed</button>
                         </div>
                     </div>
                     <div id="sim-commentary-box" class="bg-black/40 border border-white/5 rounded-xl p-4 h-48 overflow-y-auto text-xs font-mono space-y-2 scrollbar-thin scrollbar-thumb-white/10 scroll-smooth">
-                        <div class="text-[#00e5ff] font-bold">[SYSTEM] Match Simulator calibrated. Awaiting kickoff...</div>
+                        <div class="text-[#00e5ff] font-bold">[SYSTEM] Match Simulator & Web Audio Sound FX Engine calibrated. Awaiting kickoff...</div>
                     </div>
                 </div>
             </div>
@@ -463,6 +466,137 @@
         let simSpeed = 400; // 400ms = 1 game minute
         let isPaused = false;
         let hasStarted = false;
+        let isAudioMuted = false;
+
+        // Web Audio API Sound FX Engine
+        let audioCtx = null;
+        let crowdGainNode = null;
+        let crowdNoiseNode = null;
+
+        function initAudioEngine() {
+            if (audioCtx) return;
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextClass) return;
+            audioCtx = new AudioContextClass();
+
+            // Continuous Crowd Ambience Hum Synthesis
+            try {
+                const bufferSize = audioCtx.sampleRate * 2;
+                const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const output = noiseBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                crowdNoiseNode = audioCtx.createBufferSource();
+                crowdNoiseNode.buffer = noiseBuffer;
+                crowdNoiseNode.loop = true;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+                crowdGainNode = audioCtx.createGain();
+                crowdGainNode.gain.setValueAtTime(0.015, audioCtx.currentTime);
+
+                crowdNoiseNode.connect(filter);
+                filter.connect(crowdGainNode);
+                crowdGainNode.connect(audioCtx.destination);
+
+                crowdNoiseNode.start();
+            } catch (e) {
+                console.warn("Web Audio Crowd Ambience initialized passively:", e);
+            }
+        }
+
+        function toggleAudioFX() {
+            isAudioMuted = !isAudioMuted;
+            const btn = document.getElementById('sim-audio-btn');
+            if (btn) {
+                btn.textContent = isAudioMuted ? '🔇 Sound: OFF' : '🔊 Sound: ON';
+                btn.className = isAudioMuted
+                    ? 'text-xs bg-gray-500/15 text-gray-400 hover:bg-gray-500/25 transition-all px-2.5 py-1 rounded font-bold flex items-center gap-1'
+                    : 'text-xs bg-amber-500/15 text-amber-400 hover:bg-amber-500/25 transition-all px-2.5 py-1 rounded font-bold flex items-center gap-1';
+            }
+            if (crowdGainNode && audioCtx) {
+                crowdGainNode.gain.setValueAtTime(isAudioMuted ? 0 : 0.015, audioCtx.currentTime);
+            }
+        }
+
+        function playWhistle() {
+            if (isAudioMuted) return;
+            initAudioEngine();
+            if (!audioCtx) return;
+            try {
+                const osc1 = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc1.type = 'sine';
+                osc2.type = 'sine';
+                osc1.frequency.setValueAtTime(2400, audioCtx.currentTime);
+                osc2.frequency.setValueAtTime(2450, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+
+                osc1.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc1.start();
+                osc2.start();
+                osc1.stop(audioCtx.currentTime + 0.35);
+                osc2.stop(audioCtx.currentTime + 0.35);
+            } catch (e) {}
+        }
+
+        function playGoalSound() {
+            if (isAudioMuted) return;
+            initAudioEngine();
+            if (!audioCtx) return;
+            try {
+                // Dual horn surge + explosion effect
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(380, audioCtx.currentTime + 0.4);
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.9);
+            } catch (e) {}
+        }
+
+        function playCheerSound() {
+            if (isAudioMuted) return;
+            initAudioEngine();
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.25);
+
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } catch (e) {}
+        }
 
         // Helper to get random player
         function getRandomPlayer(list, fallbackList) {
@@ -488,11 +622,13 @@
         function startSimulation() {
             if (hasStarted) return;
             hasStarted = true;
+            initAudioEngine();
 
             document.getElementById('sim-start-state').classList.add('hidden');
             document.getElementById('sim-active-state').classList.remove('hidden');
 
             logCommentary("[KICKOFF] The referee blows the whistle! The match has officially started.", "text-emerald-400 font-bold");
+            playWhistle();
 
             simInterval = setInterval(tickSimulation, simSpeed);
         }
@@ -544,6 +680,7 @@
         }
 
         function cheerTeam(team) {
+            playCheerSound();
             if (team === 'home') {
                 homeCheerCount++;
                 const part = document.getElementById('cheer-home-particles');
@@ -597,6 +734,7 @@
             if (minute >= 90) {
                 clearInterval(simInterval);
                 logCommentary("[FULL TIME] The referee blows the final whistle! Match has ended.", "text-amber-400 font-bold font-heading text-sm");
+                playWhistle();
                 // End screen pulsing glow
                 const container = document.getElementById('apex-simulator-container');
                 if (container) {
@@ -755,6 +893,7 @@
         }
 
         function triggerGoalVisual() {
+            playGoalSound();
             const container = document.getElementById('apex-simulator-container');
             if (container) {
                 container.style.boxShadow = "0 0 50px rgba(34,197,94,0.6)";
