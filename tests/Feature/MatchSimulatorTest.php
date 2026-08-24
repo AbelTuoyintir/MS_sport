@@ -52,5 +52,7 @@ class MatchSimulatorTest extends TestCase
         $response->assertSee('cheer-home-btn');
         $response->assertSee('cheer-away-btn');
         $response->assertSee('sim-commentary-box');
+        $response->assertSee('sim-audio-btn');
+        $response->assertSee('Web Audio Sound FX Engine');
     }
 }
