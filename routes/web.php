@@ -50,6 +50,11 @@ Route::get('/rankings', [ClubRankingController::class, 'index'])->name('rankings
 Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
 Route::post('/tournaments/predict', [TournamentController::class, 'predictBracket'])->name('tournaments.predict');
 
+// Fantasy League
+Route::get('/fantasy', [\App\Http\Controllers\FantasyController::class, 'index'])->name('fantasy.index');
+Route::post('/fantasy', [\App\Http\Controllers\FantasyController::class, 'store'])->name('fantasy.store');
+Route::get('/fantasy/leaderboard', [\App\Http\Controllers\FantasyController::class, 'leaderboard'])->name('fantasy.leaderboard');
+
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
 Route::get('/register', [TeamRegistrationController::class, 'showForm'])->name('team.register.form');

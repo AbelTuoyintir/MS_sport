@@ -52,6 +52,9 @@
                     <a href="{{ route('lineup-builder') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('lineup-builder') ? 'text-accent-gold' : 'text-emerald-400 hover:text-emerald-300' }}">
                         <i data-lucide="users" class="w-3.5 h-3.5"></i> Lineup Builder
                     </a>
+                    <a href="{{ route('fantasy.index') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('fantasy.index') ? 'text-accent-gold' : 'text-amber-400 hover:text-amber-300' }}">
+                        <i data-lucide="trophy" class="w-3.5 h-3.5"></i> Fantasy Hub
+                    </a>
                     <a href="{{ route('predictor') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('predictor') ? 'text-accent-gold' : 'text-cyan-400 hover:text-cyan-300' }}">
                         <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Predictor
                     </a>
