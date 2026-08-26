@@ -21,6 +21,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\ClubRankingController;
+use App\Http\Controllers\FantasyController;
 use Illuminate\Support\Facades\Route;
 
 // Auth routes
@@ -49,6 +50,11 @@ Route::get('/injuries-discipline', [\App\Http\Controllers\DisciplineInjuryContro
 Route::get('/rankings', [ClubRankingController::class, 'index'])->name('rankings');
 Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments.index');
 Route::post('/tournaments/predict', [TournamentController::class, 'predictBracket'])->name('tournaments.predict');
+
+// Fantasy Football Manager Hub
+Route::get('/fantasy', [FantasyController::class, 'index'])->name('fantasy.index');
+Route::post('/fantasy/squad', [FantasyController::class, 'storeSquad'])->name('fantasy.squad.store');
+Route::get('/fantasy/leaderboard', [FantasyController::class, 'leaderboard'])->name('fantasy.leaderboard');
 
 // Registration routes
 // Route::get('/team/registration', [TeamRegistrationController::class, 'showForm'])->name('home');
