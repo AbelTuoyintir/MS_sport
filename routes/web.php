@@ -13,6 +13,8 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\ScoutAgentController;
+use App\Http\Controllers\Manager\ScoutManagementController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
@@ -91,6 +93,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/games/{game}/events', [GameController::class, 'storeEvent'])->name('admin.games.events.store');
     Route::resource('games', GameController::class)->names('admin.games');
 
+    // Scouting Agent Registry Management
+    Route::get('/scouts', [ScoutAgentController::class, 'index'])->name('admin.scouts.index');
+    Route::post('/scouts', [ScoutAgentController::class, 'store'])->name('admin.scouts.store');
+    Route::delete('/scouts/{id}', [ScoutAgentController::class, 'destroy'])->name('admin.scouts.destroy');
+
     // News Management
     Route::resource('articles', ArticleController::class)->names('admin.articles');
 });
@@ -106,6 +113,12 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     // Staff Management
     Route::post('/staff', [StaffController::class, 'store'])->name('manager.staff.store');
     Route::delete('/staff/{id}', [StaffController::class, 'destroy'])->name('manager.staff.destroy');
+
+    // Manager Scouting Agents
+    Route::get('/scouts', [ScoutManagementController::class, 'index'])->name('manager.scouts.index');
+    Route::post('/scouts/{id}/sign', [ScoutManagementController::class, 'signScout'])->name('manager.scouts.sign');
+    Route::post('/scouts/{id}/release', [ScoutManagementController::class, 'releaseScout'])->name('manager.scouts.release');
+    Route::post('/scouts/submit-player', [ScoutManagementController::class, 'submitDiscoveredPlayer'])->name('manager.scouts.submit-player');
 
     // Transfer Market
     Route::get('/transfers', [TransferController::class, 'index'])->name('manager.transfers.index');

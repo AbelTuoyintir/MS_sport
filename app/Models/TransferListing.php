@@ -12,6 +12,8 @@ class TransferListing extends Model
         'asking_price',
         'reason',
         'type',
+        'deal_type',
+        'scout_agent_id',
         'status',
     ];
 
@@ -23,6 +25,11 @@ class TransferListing extends Model
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function scoutAgent()
+    {
+        return $this->belongsTo(ScoutAgent::class, 'scout_agent_id');
     }
 
     public function offers()

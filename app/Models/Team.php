@@ -60,6 +60,11 @@ class Team extends Model
         return $this->hasMany(Staff::class);
     }
 
+    public function scoutAgents()
+    {
+        return $this->hasMany(ScoutAgent::class);
+    }
+
     public function finances()
     {
         return $this->hasMany(Finance::class);

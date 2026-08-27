@@ -122,6 +122,9 @@
                         <a href="{{ route('admin.games.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all {{ request()->routeIs('admin.games.*') ? 'bg-gold text-black shadow-md' : 'text-muted hover:text-text-light hover:bg-white/5' }}">
                             Matches
                         </a>
+                        <a href="{{ route('admin.scouts.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all {{ request()->routeIs('admin.scouts.*') ? 'bg-gold text-black shadow-md' : 'text-muted hover:text-text-light hover:bg-white/5' }}">
+                            Scout Agents
+                        </a>
                         <a href="{{ route('admin.articles.index') }}" class="px-4 py-1.5 rounded-lg text-xs font-heading font-bold uppercase tracking-wider transition-all {{ request()->routeIs('admin.articles.*') ? 'bg-gold text-black shadow-md' : 'text-muted hover:text-text-light hover:bg-white/5' }}">
                             News
                         </a>
