@@ -83,6 +83,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/payment/{paymentId}/verify', [PaymentController::class, 'manualVerify'])->name('admin.payment.verify');
     Route::post('/payment/{paymentId}/refund', [PaymentController::class, 'refundPayment'])->name('admin.payment.refund');
 
+    // Scout Agent Management
+    Route::get('/scouts', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'index'])->name('admin.scouts.index');
+    Route::post('/scouts', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'store'])->name('admin.scouts.store');
+    Route::delete('/scouts/{id}', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'destroy'])->name('admin.scouts.destroy');
+
     // Team Management
     Route::resource('teams', \App\Http\Controllers\Admin\TeamManagementController::class)->names('admin.teams');
 
@@ -118,6 +123,12 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/training', [TeamActivityController::class, 'storeTraining'])->name('manager.training.store');
     Route::get('/injuries', [TeamActivityController::class, 'injuryIndex'])->name('manager.injuries.index');
     Route::post('/injuries', [TeamActivityController::class, 'storeInjury'])->name('manager.injuries.store');
+
+    // Scouting Agents & Player Submission Hub
+    Route::get('/scouts', [\App\Http\Controllers\ScoutManagementController::class, 'index'])->name('manager.scouts.index');
+    Route::post('/scouts/{id}/sign', [\App\Http\Controllers\ScoutManagementController::class, 'sign'])->name('manager.scouts.sign');
+    Route::post('/scouts/{id}/release', [\App\Http\Controllers\ScoutManagementController::class, 'release'])->name('manager.scouts.release');
+    Route::post('/scouts/submit-player', [\App\Http\Controllers\ScoutManagementController::class, 'submitPlayer'])->name('manager.scouts.submit-player');
 
     // Operations
     Route::get('/finance', [TeamOperationsController::class, 'financeIndex'])->name('manager.finance.index');
