@@ -75,6 +75,11 @@ class Team extends Model
         return $this->hasMany(ScoutReport::class);
     }
 
+    public function scoutAgents()
+    {
+        return $this->hasMany(ScoutAgent::class);
+    }
+
     public function trainingSessions()
     {
         return $this->hasMany(TrainingSession::class);
