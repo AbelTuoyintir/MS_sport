@@ -93,6 +93,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     // News Management
     Route::resource('articles', ArticleController::class)->names('admin.articles');
+
+    // Scouting Agents Management
+    Route::get('/scouts', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'index'])->name('admin.scouts.index');
+    Route::post('/scouts', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'store'])->name('admin.scouts.store');
+    Route::delete('/scouts/{id}', [\App\Http\Controllers\Admin\ScoutAgentController::class, 'destroy'])->name('admin.scouts.destroy');
 });
 
 // Manager routes (protected)
@@ -118,6 +123,12 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/training', [TeamActivityController::class, 'storeTraining'])->name('manager.training.store');
     Route::get('/injuries', [TeamActivityController::class, 'injuryIndex'])->name('manager.injuries.index');
     Route::post('/injuries', [TeamActivityController::class, 'storeInjury'])->name('manager.injuries.store');
+
+    // Manager Scouting Network & Player Submission Hub
+    Route::get('/scouts', [\App\Http\Controllers\ScoutManagementController::class, 'index'])->name('manager.scouts.index');
+    Route::post('/scouts/{id}/sign', [\App\Http\Controllers\ScoutManagementController::class, 'signAgent'])->name('manager.scouts.sign');
+    Route::post('/scouts/{id}/release', [\App\Http\Controllers\ScoutManagementController::class, 'releaseAgent'])->name('manager.scouts.release');
+    Route::post('/scouts/submit-player', [\App\Http\Controllers\ScoutManagementController::class, 'submitPlayer'])->name('manager.scouts.submit-player');
 
     // Operations
     Route::get('/finance', [TeamOperationsController::class, 'financeIndex'])->name('manager.finance.index');
