@@ -64,6 +64,7 @@
                             Operations <i data-lucide="chevron-down" class="w-3 h-3"></i>
                         </button>
                         <div class="absolute top-full left-0 mt-2 w-48 glass-card border border-white/10 hidden group-hover:block z-50 overflow-hidden">
+                            <a href="{{ route('manager.scouts.index') }}" class="block px-4 py-3 text-sm text-accent-gold font-bold hover:bg-white/5 transition-colors">Scout Network & Prospects</a>
                             <a href="{{ route('manager.finance.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Finance</a>
                             <a href="{{ route('manager.equipment.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Equipment</a>
                             <a href="{{ route('manager.scouting.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Scouting Reports</a>

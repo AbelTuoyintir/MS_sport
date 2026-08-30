@@ -16,7 +16,21 @@ class TransferOffer extends Model
         'expiry_date',
         'status',
         'notes',
+        'offer_type',
+        'parent_offer_id',
+        'counter_amount',
+        'counter_notes',
     ];
+
+    public function parentOffer()
+    {
+        return $this->belongsTo(TransferOffer::class, 'parent_offer_id');
+    }
+
+    public function counterOffers()
+    {
+        return $this->hasMany(TransferOffer::class, 'parent_offer_id');
+    }
 
     public function listing()
     {

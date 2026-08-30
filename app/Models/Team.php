@@ -75,6 +75,11 @@ class Team extends Model
         return $this->hasMany(ScoutReport::class);
     }
 
+    public function scoutAgents()
+    {
+        return $this->belongsToMany(ScoutAgent::class, 'scout_agent_team')->withTimestamps()->withPivot('signed_at');
+    }
+
     public function trainingSessions()
     {
         return $this->hasMany(TrainingSession::class);

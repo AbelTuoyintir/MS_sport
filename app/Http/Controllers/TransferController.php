@@ -19,13 +19,21 @@ class TransferController extends Controller
     public function index()
     {
         $listings = TransferListing::with(['player', 'team'])->where('status', 'active')->get();
-        $incoming_offers = TransferOffer::with(['player', 'buyingTeam'])
-            ->where('selling_team_id', auth()->user()->team_id)
-            ->where('status', 'pending')
+        $userTeamId = auth()->user()->team_id;
+
+        $incoming_offers = TransferOffer::with(['player', 'buyingTeam', 'counterOffers'])
+            ->where('selling_team_id', $userTeamId)
+            ->whereIn('status', ['pending', 'countered'])
             ->get();
+
+        $my_sent_offers = TransferOffer::with(['player', 'sellingTeam', 'counterOffers'])
+            ->where('buying_team_id', $userTeamId)
+            ->get();
+
+        $all_players = Player::with('team')->where('team_id', '!=', $userTeamId)->get();
         $rumours = $this->generateTransferRumours();
 
-        return view('transfers.index', compact('listings', 'incoming_offers', 'rumours'));
+        return view('transfers.index', compact('listings', 'incoming_offers', 'my_sent_offers', 'all_players', 'rumours'));
     }
 
     private function generateTransferRumours()
@@ -78,7 +86,7 @@ class TransferController extends Controller
             'player_id' => 'required|exists:players,id',
             'asking_price' => 'nullable|numeric',
             'reason' => 'nullable|string',
-            'type' => 'required|in:permanent,loan',
+            'type' => 'required|in:permanent,loan_half,loan_full',
         ]);
 
         $player = Player::findOrFail($validated['player_id']);
@@ -96,7 +104,7 @@ class TransferController extends Controller
             'status' => 'active',
         ]);
 
-        return redirect()->back()->with('success', 'Player listed for transfer.');
+        return redirect()->back()->with('success', 'Player listed for transfer/loan successfully.');
     }
 
     public function makeOffer(Request $request)
@@ -107,42 +115,62 @@ class TransferController extends Controller
 
         $validated = $request->validate([
             'player_id' => 'required|exists:players,id',
-            'offer_amount' => 'required|numeric',
+            'offer_amount' => 'required|numeric|min:0',
+            'offer_type' => 'required|in:permanent,loan_half,loan_full',
             'notes' => 'nullable|string',
+            'listing_id' => 'nullable|exists:transfer_listings,id',
         ]);
 
         $player = Player::findOrFail($validated['player_id']);
 
         if ($player->team_id === auth()->user()->team_id) {
-            return redirect()->back()->with('error', 'You cannot buy your own player.');
+            return redirect()->back()->with('error', 'You cannot place an offer on your own player.');
         }
 
         TransferOffer::create([
+            'listing_id' => $validated['listing_id'] ?? null,
             'player_id' => $player->id,
             'buying_team_id' => auth()->user()->team_id,
             'selling_team_id' => $player->team_id,
             'offer_amount' => $validated['offer_amount'],
+            'offer_type' => $validated['offer_type'],
             'status' => 'pending',
-            'notes' => $validated['notes'],
+            'notes' => $validated['notes'] ?? null,
         ]);
 
-        return redirect()->back()->with('success', 'Transfer offer sent.');
+        return redirect()->back()->with('success', 'Transfer / Loan bid submitted to selling club.');
     }
 
     public function handleOffer(Request $request, $id)
     {
         $offer = TransferOffer::findOrFail($id);
+        $userTeamId = auth()->user()->team_id;
 
-        if ($offer->selling_team_id !== auth()->user()->team_id) {
+        if ($offer->selling_team_id !== $userTeamId && $offer->buying_team_id !== $userTeamId) {
             return redirect()->back()->with('error', 'Unauthorized.');
         }
 
-        $action = $request->input('action'); // accept or reject
+        $action = $request->input('action'); // accept, reject, counter
+
+        if ($action === 'counter') {
+            $validated = $request->validate([
+                'counter_amount' => 'required|numeric|min:0',
+                'counter_notes' => 'nullable|string',
+            ]);
+
+            $offer->update([
+                'status' => 'countered',
+                'counter_amount' => $validated['counter_amount'],
+                'counter_notes' => $validated['counter_notes'],
+            ]);
+
+            return redirect()->back()->with('success', 'Counter-offer sent to buying manager.');
+        }
 
         if ($action === 'accept') {
             $offer->update(['status' => 'accepted']);
 
-            // Execute transfer
+            // Execute transfer or loan
             $player = $offer->player;
             $oldTeamName = $player->team->team_name;
             $player->update(['team_id' => $offer->buying_team_id]);
@@ -152,16 +180,24 @@ class TransferController extends Controller
             // Close listings
             TransferListing::where('player_id', $player->id)->update(['status' => 'sold']);
 
+            $dealTypeTitle = match($offer->offer_type) {
+                'loan_half' => 'Half-Season Loan',
+                'loan_full' => 'Full-Season Loan',
+                default => 'Permanent Move',
+            };
+
+            $finalAmount = ($offer->status === 'countered' && $offer->counter_amount) ? $offer->counter_amount : $offer->offer_amount;
+
             // Automatically generate a News Article
             \App\Models\Article::create([
-                'title' => "TRANSFER DONE: {$player->name} Joins {$newTeamName}!",
+                'title' => "DEAL DONE ({$dealTypeTitle}): {$player->name} Joins {$newTeamName}!",
                 'slug' => \Illuminate\Support\Str::slug("transfer-{$player->name}-joins-{$newTeamName}-" . uniqid()),
-                'content' => "{$player->name} has officially completed a move from {$oldTeamName} to {$newTeamName} for a fee of GH₵ " . number_format($offer->offer_amount, 2) . ". The manager of {$newTeamName} expressed great delight in securing the player's signature.",
+                'content' => "{$player->name} has officially completed a {$dealTypeTitle} move from {$oldTeamName} to {$newTeamName} for a fee of GH₵ " . number_format($finalAmount, 2) . ". The manager of {$newTeamName} expressed great delight in finalizing negotiations.",
                 'tag' => 'Transfer',
                 'is_published' => true,
             ]);
 
-            return redirect()->back()->with('success', 'Transfer completed and news article generated!');
+            return redirect()->back()->with('success', 'Deal accepted and completed successfully! News article generated.');
         } else {
             $offer->update(['status' => 'rejected']);
             return redirect()->back()->with('success', 'Offer rejected.');
