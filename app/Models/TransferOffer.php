@@ -12,6 +12,11 @@ class TransferOffer extends Model
         'buying_team_id',
         'selling_team_id',
         'offer_amount',
+        'offer_type',
+        'counter_amount',
+        'counter_type',
+        'counter_notes',
+        'parent_offer_id',
         'proposed_contract_years',
         'expiry_date',
         'status',
@@ -36,5 +41,10 @@ class TransferOffer extends Model
     public function sellingTeam()
     {
         return $this->belongsTo(Team::class, 'selling_team_id');
+    }
+
+    public function parentOffer()
+    {
+        return $this->belongsTo(TransferOffer::class, 'parent_offer_id');
     }
 }
