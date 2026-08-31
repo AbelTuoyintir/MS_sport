@@ -49,6 +49,9 @@
                     <a href="{{ route('manager.training.index') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('manager.training.index') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Training</a>
                     <a href="{{ route('injuries-discipline') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('injuries-discipline') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Injuries & Discipline</a>
                     <a href="{{ route('manager.transfers.index') }}" class="text-sm font-bold uppercase tracking-wider {{ request()->routeIs('manager.transfers.index') ? 'text-accent-gold' : 'text-gray-400 hover:text-white' }}">Transfers</a>
+                    <a href="{{ route('manager.scouts.index') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('manager.scouts.*') ? 'text-accent-gold' : 'text-amber-400 hover:text-amber-300' }}">
+                        <i data-lucide="user-check" class="w-3.5 h-3.5"></i> Scout Agents
+                    </a>
                     <a href="{{ route('lineup-builder') }}" class="text-sm font-bold uppercase tracking-wider flex items-center gap-1 {{ request()->routeIs('lineup-builder') ? 'text-accent-gold' : 'text-emerald-400 hover:text-emerald-300' }}">
                         <i data-lucide="users" class="w-3.5 h-3.5"></i> Lineup Builder
                     </a>
@@ -64,6 +67,7 @@
                             Operations <i data-lucide="chevron-down" class="w-3 h-3"></i>
                         </button>
                         <div class="absolute top-full left-0 mt-2 w-48 glass-card border border-white/10 hidden group-hover:block z-50 overflow-hidden">
+                            <a href="{{ route('manager.scouts.index') }}" class="block px-4 py-3 text-sm text-amber-400 hover:text-amber-300 hover:bg-white/5 transition-colors">Scout Agents Pool</a>
                             <a href="{{ route('manager.finance.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Finance</a>
                             <a href="{{ route('manager.equipment.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Equipment</a>
                             <a href="{{ route('manager.scouting.index') }}" class="block px-4 py-3 text-sm text-gray-400 hover:text-accent-gold hover:bg-white/5 transition-colors">Scouting Reports</a>
