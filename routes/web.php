@@ -13,6 +13,7 @@ use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\GameController;
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\ScoutAgentController;
 use App\Http\Controllers\TransferController;
 use App\Http\Controllers\TeamActivityController;
 use App\Http\Controllers\TeamOperationsController;
@@ -93,6 +94,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     // News Management
     Route::resource('articles', ArticleController::class)->names('admin.articles');
+
+    // Scouting Agents Management
+    Route::resource('scouts', ScoutAgentController::class)->names('admin.scouts');
 });
 
 // Manager routes (protected)
@@ -112,6 +116,7 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::post('/transfers/list', [TransferController::class, 'listPlayer'])->name('manager.transfers.list');
     Route::post('/transfers/offer', [TransferController::class, 'makeOffer'])->name('manager.transfers.offer');
     Route::post('/transfers/handle/{id}', [TransferController::class, 'handleOffer'])->name('manager.transfers.handle');
+    Route::post('/transfers/handle-counter/{id}', [TransferController::class, 'handleCounter'])->name('manager.transfers.handle-counter');
 
     // Training & Injuries
     Route::get('/training', [TeamActivityController::class, 'trainingIndex'])->name('manager.training.index');
@@ -128,6 +133,12 @@ Route::middleware(['auth', 'manager'])->prefix('manager')->group(function () {
     Route::get('/scouting', [TeamOperationsController::class, 'scoutingIndex'])->name('manager.scouting.index');
     Route::post('/scouting', [TeamOperationsController::class, 'storeScout'])->name('manager.scouting.store');
     Route::post('/scouting/ai/generate', [TeamOperationsController::class, 'scoutingAiGenerate'])->name('manager.scouting.ai.generate');
+
+    // Scouting Agents & Player Submission
+    Route::get('/scouts', [\App\Http\Controllers\ScoutManagementController::class, 'index'])->name('manager.scouts.index');
+    Route::post('/scouts/sign/{id}', [\App\Http\Controllers\ScoutManagementController::class, 'sign'])->name('manager.scouts.sign');
+    Route::post('/scouts/release/{id}', [\App\Http\Controllers\ScoutManagementController::class, 'release'])->name('manager.scouts.release');
+    Route::post('/scouts/submit-player', [\App\Http\Controllers\ScoutManagementController::class, 'submitPlayer'])->name('manager.scouts.submit-player');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('manager.reports.index');

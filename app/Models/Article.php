@@ -16,6 +16,10 @@ class Article extends Model
         'is_published',
     ];
 
+    protected $casts = [
+        'is_published' => 'boolean',
+    ];
+
     protected static function boot()
     {
         parent::boot();
