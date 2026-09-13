@@ -12,8 +12,8 @@ async def main():
 
         # 1. Login as Admin and view Admin Scouts Registry
         await page.goto("http://localhost:8000/login")
-        await page.fill('input[name="email"]', "admin@league.com")
-        await page.fill('input[name="password"]', "password")
+        await page.fill('input[name="email"]', "admin@mpleague.com")
+        await page.fill('input[name="password"]', "admin123")
         await page.click('button[type="submit"]')
         await page.wait_for_timeout(1000)
 
